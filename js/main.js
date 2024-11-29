@@ -4,8 +4,8 @@ var gamePrefs=
     gameHeight:540,
     level1Width:1040, //130*8
     level1Height:1040, //130*8
-    LINK_SPEED:100,
-    LINK_GRAVITY:0
+    STUDENT_SPEED:100,
+    STUDENT_GRAVITY:0
 }
 
 var config = 
