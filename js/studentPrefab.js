@@ -92,7 +92,13 @@ class studentPrefab extends Phaser.GameObjects.Sprite
         (
             this,
             this.scene.walls
-        );        
+        );
+
+        this.scene.physics.add.collider
+        (
+            this,
+            this.scene.bush
+        );          
     }
 
     preUpdate(time,delta)
