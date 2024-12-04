@@ -24,8 +24,9 @@ class exteriorCastle extends Phaser.Scene
 
     create()
     {
-        this.add.sprite(10, 10, 'Background');
+        this.add.sprite(510, 510, 'Background');
         this.add.image('Background');
+        
         // Cargamos JSON
         this.map = this.add.tilemap('ZeldaMap');
 
@@ -36,16 +37,16 @@ class exteriorCastle extends Phaser.Scene
         this.walls = this.map.createLayer('Collisions', 'CastilloZelda');
 
         // Pintar PJ
-        this.student = new studentPrefab(this, 180, 200).setDepth(1);
-
+        this.student = new studentPrefab(this, 500, 700).setDepth(1);
+        
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
-
+        
         // COLISIONES
         this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
-
+        
         // CAMARA
         this.cameras.main.startFollow(this.student);
-        this.cameras.main.setBounds(0,0,gamePrefs.gameWidth,gamePrefs.gameHeight);
+        this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
     }
 }

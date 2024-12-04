@@ -7,7 +7,7 @@ class studentPrefab extends Phaser.GameObjects.Sprite
         _scene.physics.world.enable(this);
         this.student = this;
         this.scene = _scene;
-        this.body.setSize(12,22,true).setOffset(43,19);
+        this.body.setSize(12,10,true).setOffset(43,28);
         this.setColliders();
         this.cursors = this.scene.input.keyboard.createCursorKeys();
          this.loadAnimations();
@@ -97,11 +97,9 @@ class studentPrefab extends Phaser.GameObjects.Sprite
 
     preUpdate(time,delta)
     {
-       // this.anims.play("idle",true);
         if(this.cursors.left.isDown)
         { //ME MUEVO A LA IZQUIERDA
             this.body.setVelocityX(-gamePrefs.STUDENT_SPEED);
-          // this.body.setVelocity(100, 0);
             this.setFlipX(true);
             this.student.anims.play('run',true);
         }else
@@ -126,12 +124,11 @@ class studentPrefab extends Phaser.GameObjects.Sprite
             this.anims.play('run',true);
         }
         else
-        { //NO ME MUEVO AT ALL
+        { //NO ME MUEVO
             this.body.setVelocityX(0);
             this.body.setVelocityY(0);
             if(!this.playingAnim)
                 this.anims.play('idle',true);
-            //this.anims.stop().setFrame(0);
         }    
         super.preUpdate(time, delta);
         
