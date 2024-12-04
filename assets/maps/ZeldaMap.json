@@ -1643,6 +1643,18 @@
                  "width":16,
                  "x":736,
                  "y":192
+                }, 
+                {
+                 "ellipse":true,
+                 "height":16,
+                 "id":143,
+                 "name":"",
+                 "rotation":0,
+                 "type":"changeScene",
+                 "visible":false,
+                 "width":16,
+                 "x":896,
+                 "y":160
                 }],
          "offsetx":6,
          "offsety":5,
@@ -1669,7 +1681,7 @@
                          "value":"No puedes pasar."
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"NPC",
                  "visible":true,
                  "width":0,
                  "x":512,
@@ -1823,7 +1835,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":142,
+ "nextobjectid":144,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.0",

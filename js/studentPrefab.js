@@ -28,7 +28,7 @@ class studentPrefab extends Phaser.GameObjects.Sprite
             frameRate: 10,
             repeat: -1,
         });
-         console.log("hola?");
+        
         this.anims.create(
         {
             key: 'walking',

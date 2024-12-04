@@ -7,14 +7,13 @@ class bushPrefab extends Phaser.GameObjects.Sprite
         _scene.physics.world.enable(this);
         this.bush = this;
         this.bush.body.setAllowGravity(false);
-        this.anims.play(_bush.spriteTag,true);
         this.scene = _scene;
         this.setColliders();
     }
 
     setColliders()
     {
-        this.scene.physics.add.overlap
+        this.scene.physics.add.collider
         (
             this.scene.student,
             this.bush,
