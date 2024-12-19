@@ -13,28 +13,29 @@ class swordLevel extends Phaser.Scene
         this.load.spritesheet('student', 'spr_student.png', {frameWidth:96,frameHeight:64});
 
         this.load.setPath('assets/tilesets'); // Declarar tiled
-        this.load.image('Background', 'SwordDungeon.png');
+        this.load.image('Background', 'SwordDungeon1.png');
         //this.load.image('changeScene', '');
 
         this.load.setPath('assets/maps'); // Declarar mapa
-        this.load.tilemapTiledJSON('SwordDungeonTiled', 'SwordDungeon.json');
+        this.load.tilemapTiledJSON('Sword_Dungeon', 'SwordDungeon.json');
+
 
         this.cursors = this.input.keyboard.createCursorKeys();
     }
 
     create()
     {
-        this.add.sprite(100, 100, 'Background');
+        this.add.sprite(230, 100, 'Background');
         this.add.image('Background');
         
         // Cargamos JSON
-        this.map = this.add.tilemap('SwordDungeonTiled');
+        this.map = this.add.tilemap('SwordDungeon');
 
         // Pintar capas
-        this.walls = this.map.createLayer('Collisions', 'SwordDungeon');
+        this.walls = this.map.createLayer('Collisions', 'Sword_Dungeon');
 
         // Pintar PJ
-        this.student = new studentPrefab(this, 100, 100).setDepth(1);
+        this.student = new studentPrefab(this, 380, 110).setDepth(1);
         
         // Pintar capa superior
         //this.map.createLayer('Superior', 'SwordDungeon');

@@ -65,14 +65,14 @@ class exteriorCastle extends Phaser.Scene
                             });
                         break;
 
-                    case 'changeScene':
-                        this.changeScene = new changeScenePrefab (
-                            this,
-                            {
-                             posX:element.x,
-                             posY:element.y,
-                            });
-                        break;
+                    //case 'changeScene':
+                      //  this.changeScene = new changeScenePrefab (
+                        //    this,
+                          //  {
+                            // posX:element.x,
+                            // posY:element.y,
+                            //});
+                        //break;
 
                     default:
                         break;
