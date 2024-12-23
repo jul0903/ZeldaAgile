@@ -13,8 +13,10 @@ class exteriorCastle extends Phaser.Scene
         this.load.spritesheet('link', 'spr_link2.gif', { frameWidth: 41, frameHeight: 45});
         this.load.spritesheet('linkWalk', 'sprLinkWalking.png', { frameWidth: 16, frameHeight: 26,transparentColor: '#004040'});
         this.load.setPath('assets/tilesets'); // Declarar tiled
-        this.load.image('CastleTileset', 'CastleTileset.png');
-        this.load.image('Background', 'CastilloZelda.png');
+        this.load.image('Background', 'CastleTilesetSimple.png');
+        this.load.image('bush', 'arbusto.png');
+        //this.load.image('changeScene', '');
+
 
         this.load.setPath('assets/maps'); // Declarar mapa
         this.load.tilemapTiledJSON('ZeldaMap', 'ZeldaMap.json');
@@ -29,9 +31,6 @@ class exteriorCastle extends Phaser.Scene
         
         // Cargamos JSON
         this.map = this.add.tilemap('ZeldaMap');
-
-        // Cargamos tileset
-        this.map.addTilesetImage('CastleTileset');
 
         // Pintar capas
         this.walls = this.map.createLayer('Collisions', 'CastilloZelda');
@@ -48,5 +47,36 @@ class exteriorCastle extends Phaser.Scene
         // CAMARA
         this.cameras.main.startFollow(this.link);
         this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
+        
+        
+        
+        this.game_elements = this.map.getObjectLayer('Arbustos');
+        this.game_elements.objects.forEach(function (element)
+        {
+            switch(element.type)
+                {
+                    case 'bush':
+                        this.bush = new bushPrefab (
+                            this,
+                            {
+                             posX:element.x,
+                             posY:element.y,
+                             spriteTag:element.type,
+                            });
+                        break;
+
+                    //case 'changeScene':
+                      //  this.changeScene = new changeScenePrefab (
+                        //    this,
+                          //  {
+                            // posX:element.x,
+                            // posY:element.y,
+                            //});
+                        //break;
+
+                    default:
+                        break;
+                }           
+        },this);
     }
 }
