@@ -10,8 +10,8 @@ class exteriorCastle extends Phaser.Scene
         this.cameras.main.setBackgroundColor("112");
 
         this.load.setPath('assets/sprites'); // Declarar spriteSheet PJ (Link)
-        this.load.spritesheet('student', 'spr_student.png', {frameWidth:96,frameHeight:64});
-
+        this.load.spritesheet('link', 'spr_link2.gif', { frameWidth: 41, frameHeight: 45});
+        this.load.spritesheet('linkWalk', 'sprLinkWalking.png', { frameWidth: 16, frameHeight: 26,transparentColor: '#004040'});
         this.load.setPath('assets/tilesets'); // Declarar tiled
         this.load.image('CastleTileset', 'CastleTileset.png');
         this.load.image('Background', 'CastilloZelda.png');
@@ -37,7 +37,7 @@ class exteriorCastle extends Phaser.Scene
         this.walls = this.map.createLayer('Collisions', 'CastilloZelda');
 
         // Pintar PJ
-        this.student = new studentPrefab(this, 500, 700).setDepth(1);
+        this.link = new linkPrefab(this, 500, 700).setDepth(1);
         
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
@@ -46,7 +46,7 @@ class exteriorCastle extends Phaser.Scene
         this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
         
         // CAMARA
-        this.cameras.main.startFollow(this.student);
+        this.cameras.main.startFollow(this.link);
         this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
     }
 }
