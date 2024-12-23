@@ -15,7 +15,7 @@ class bushPrefab extends Phaser.GameObjects.Sprite
     {
         this.scene.physics.add.collider
         (
-            this.scene.student,
+            this.scene.link,
             this.bush,
             this.getBush,
             null,
