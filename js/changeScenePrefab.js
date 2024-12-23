@@ -15,7 +15,7 @@ class changeScenePrefab extends Phaser.GameObjects.Sprite
     {
         this.scene.physics.add.overlap
         (
-            this.scene.student,
+            this.scene.link,
             this,
             this.ChangeScene,
             null,
