@@ -1,12 +1,13 @@
-var gamePrefs=
-{
-    gameWidth:960,
-    gameHeight:540,
-    level1Width:1040, //130*8
-    level1Height:1040, //130*8
-    LINK_SPEED:100,
-    LINK_GRAVITY:0
-}
+//Cargamos el Intellisense
+/// <reference path="../def/phaser.d.ts" />
+
+//Importamos las escenas
+import exteriorCastle from '/js/scenes/exteriorCastle.js';
+import swordLevel from '/js/scenes/swordLevel.js';
+
+//Importamos el módulo de gamePrefs
+import {gamePrefs} from '/js/globals.js';
+//import {config} from '/js/globals.js'; <- Podría haber más
 
 var config = 
 {
