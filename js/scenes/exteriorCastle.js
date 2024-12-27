@@ -18,13 +18,14 @@ export default class exteriorCastle extends Phaser.Scene
         this.load.setPath('assets/sprites'); // Declarar spriteSheet PJ (Link)
         this.load.spritesheet('link', 'spr_link2.gif', { frameWidth: 41, frameHeight: 45});
         this.load.spritesheet('linkWalk', 'sprLinkWalking.png', { frameWidth: 16, frameHeight: 26,transparentColor: '#004040'});
+        
         this.load.setPath('assets/tilesets'); // Declarar tiled
         this.load.image('Background', 'CastleTilesetSimple.png');
         this.load.image('bush', 'arbusto.png');
         //this.load.image('changeScene', '');
 
 
-        this.load.setPath('assets/maps'); // Declarar mapa
+        this.load.setPath('assets/maps/CastleExterior'); // Declarar mapa
         this.load.tilemapTiledJSON('ZeldaMap', 'ZeldaMap.json');
 
         this.cursors = this.input.keyboard.createCursorKeys();
