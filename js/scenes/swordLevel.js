@@ -6,6 +6,8 @@ import linkPrefab from '/js/prefabs/linkPrefab.js';
 
 export default class swordLevel extends Phaser.Scene
 {
+    //archer: 21x24
+    //sword: 36x36
     constructor()
     {
         super({key:'swordLevel'});

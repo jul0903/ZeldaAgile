@@ -1,8 +1,6 @@
-import {gamePrefs} from '../globals.js';
-
-export default class linkPrefab extends Phaser.GameObjects.Sprite 
+class enemyPrefab extends Phaser.GameObjects.Sprite 
 {
-    constructor(_scene,_posX,_posY,_spriteTag='link')
+    constructor(_scene,_posX,_posY,_spriteTag='enemy')
     { //instanciar el objeto
         super(_scene,_posX,_posY,_spriteTag);
         _scene.add.existing(this);
