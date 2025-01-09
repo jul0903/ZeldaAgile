@@ -14,7 +14,7 @@ var config =
     type: Phaser.AUTO,
     width: gamePrefs.gameWidth,
     height: gamePrefs.gameHeight,
-    scene:[swordLevel], //array con las escenas
+    scene:[exteriorCastle], //array con las escenas
     render:
     {
         pixelArt:true
