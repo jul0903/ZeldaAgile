@@ -1,5 +1,7 @@
 class exteriorCastle extends Phaser.Scene
 {
+    //archer: 21x24
+    //sword: 36x36
     constructor()
     {
         super({key:'exteriorCastle'});
