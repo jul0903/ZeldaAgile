@@ -3,6 +3,7 @@ import {gamePrefs} from '../globals.js';
 import bushPrefab from '/js/prefabs/bushPrefab.js';
 import changeScenePrefab from '/js/prefabs/changeScenePrefab.js';
 import linkPrefab from '/js/prefabs/linkPrefab.js';
+import enemiesPrefab from '/js/prefabs/enemiesPrefab.js';
 
 export default class exteriorCastle extends Phaser.Scene
 {
@@ -27,7 +28,7 @@ export default class exteriorCastle extends Phaser.Scene
         this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 16, frameHeight: 24});
 
         //ENEMIES
-        this.load.spritesheet('enemies', 'sprEnemies.png', { frameWidth: 27, frameHeight: 38});
+        this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
 
         //NPCs
         this.load.spritesheet('npc', 'sprNpc.png', { frameWidth: 16, frameHeight: 24});
@@ -59,6 +60,18 @@ export default class exteriorCastle extends Phaser.Scene
 
         // Pintar PJ
         this.link = new linkPrefab(this, 500, 700).setDepth(1);
+
+        // Crear enemigos y pasar referencia del jugador
+         // Crear un grupo para manejar enemigos
+        this.enemies = this.add.group();
+
+        this.enemies = this.add.group();
+
+        const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
+        const rangerEnemy = new enemiesPrefab(this, 300, 750, 'ranger', this.link).setDepth(1);
+
+        this.enemies.add(meleEnemy);
+        this.enemies.add(rangerEnemy);
         
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
@@ -100,4 +113,11 @@ export default class exteriorCastle extends Phaser.Scene
                 }           
         },this);
     }
+
+    update(time, delta) {
+        // Llama al método update de cada enemigo en el grupo
+        this.enemies.getChildren().forEach((enemy) => {
+            enemy.update(time, delta);
+        });
+    }    
 }
