@@ -6,10 +6,8 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.type = type; // 'mele' o 'ranger'
         this.player = player; // Referencia al jugador
-        this.range = 40; // Rango de detección
-        this.speed = type === 'mele' ? 50 : 30; // Velocidad según tipo
+        this.area = 40; // Rango de detección
         this.attacking = false;
-
         // Configuración inicial
         scene.add.existing(this);
         scene.physics.world.enable(this);
@@ -19,12 +17,17 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         // Variables de movimiento
         this.initialX = x; // Posición inicial
         this.patrolDistance = 40; // Distancia de patrullaje en píxeles
-        this.speed = 50; // Velocidad en píxeles por segundo
+        this.speed = type === 'mele' ? 30 : 10; // Velocidad según tipo
         this.movingRight = true; // Dirección inicial
 
         // Animaciones
         this.loadAnimations();
-        this.anims.play('meleIdleRight', true); // Animación inicial
+        if(type=='mele')
+            this.anims.play('meleIdleRight', true); // Animación inicial
+        else if (type=='ranger')
+            this.anims.play('rangerIdleDown', true); // Animación inicial
+        else
+            console.log("no type detected")
 
         this.setColliders();
     }
@@ -190,7 +193,36 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
             frames:this.anims.generateFrameNumbers('enemies', {start:32, end:34}),
             frameRate: 10,
             repeat: -1
-        });   
+        });  
+        
+        //ARROW
+        this.anims.create({
+            key: 'enemiesArrowDown',
+            frames: [{ key: 'enemiesArrow', frame: 0 }], 
+            frameRate: 1, 
+            repeat: -1    
+        });
+
+        this.anims.create({
+            key: 'enemiesArrowRight',
+            frames: [{ key: 'enemiesArrow', frame: 1 }], 
+            frameRate: 1, 
+            repeat: -1    
+        });
+
+        this.anims.create({
+            key: 'enemiesArrowLeft',
+            frames: [{ key: 'enemiesArrow', frame: 1 }], 
+            frameRate: 1, 
+            repeat: -1    
+        });
+
+        this.anims.create({
+            key: 'enemiesArrowUp',
+            frames: [{ key: 'enemiesArrow', frame: 2 }], 
+            frameRate: 1, 
+            repeat: -1    
+        });
     } 
 
     move(delta) {
@@ -198,25 +230,40 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
     
         const velocity = this.speed * delta / 1000;
     
+        // Movimiento horizontal (derecha e izquierda)
         if (this.movingRight) {
             this.x += velocity;
+            this.body.velocity.x = velocity;  // Aseguramos que haya movimiento en X
             if (this.x >= this.initialX + this.patrolDistance) {
                 this.movingRight = false;
-                this.anims.play('meleWalkRight', true);
-                this.setFlipX(true);
             }
         } else {
             this.x -= velocity;
+            this.body.velocity.x = -velocity;  // Movimiento hacia la izquierda
             if (this.x <= this.initialX) {
                 this.movingRight = true;
-                this.anims.play('meleWalkRight', true);
-                this.setFlipX(false);
+            }
+        }
+    
+        // Movimiento hacia abajo (Y positivo)
+        if (this.movingDown) {
+            this.y += velocity;
+            this.body.velocity.y = velocity;
+            if (this.y >= this.initialY + this.patrolDistance) {
+                this.movingDown = false;
+            }
+        }
+        // Movimiento hacia arriba (Y negativo)
+        else if (this.movingUp) {
+            this.y -= velocity;
+            this.body.velocity.y = -velocity;
+            if (this.y <= this.initialY) {
+                this.movingUp = true;
             }
         }
     }
     
-
-    update(time, delta) {
+    handleMeleBehavior(delta) {
         const distanceToPlayer = Phaser.Math.Distance.Between(
             this.x,
             this.y,
@@ -224,48 +271,50 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
             this.player.y
         );
     
-        if (distanceToPlayer <= this.range) {
+        if (distanceToPlayer <= this.area) {
             // Si el jugador está en rango, perseguir
             this.isChasing = true;
             this.scene.physics.moveToObject(this, this.player, this.speed + 40);
     
-            // Cambiar animación según la dirección
-            if (this.body.velocity.x > 0) {
-                if (this.anims.currentAnim.key !== 'meleWalkRight') {
-                    this.anims.play('meleWalkRight', true);
-                }
-                this.setFlipX(false);
-            } else if (this.body.velocity.x < 0) {
-                if (this.anims.currentAnim.key !== 'meleWalkLeft') {
-                    this.anims.play('meleWalkLeft', true);
-                }
-                this.setFlipX(true);
-            } else if (this.body.velocity.y < 0) {
-                if (this.anims.currentAnim.key !== 'meleWalkUp') {
-                    this.anims.play('meleWalkUp', true);
-                }
-            } else if (this.body.velocity.y > 0) {
-                if (this.anims.currentAnim.key !== 'meleWalkDown') {
-                    this.anims.play('meleWalkDown', true);
-                }
+            // Calcular el ángulo hacia el jugador
+            const angleToPlayer = Phaser.Math.Angle.Between(this.x, this.y, this.player.x, this.player.y);
+    
+            // Elegir animación dependiendo del ángulo
+            if (angleToPlayer >= -Math.PI / 4 && angleToPlayer < Math.PI / 4) { // Derecha
+                this.anims.play('meleWalkRight', true);
+                this.setFlipX(false);  // No invertir sprite
+            } else if (angleToPlayer >= Math.PI / 4 && angleToPlayer < 3 * Math.PI / 4) { // Abajo derecha
+                this.anims.play('meleWalkDown', true);
+            } else if (angleToPlayer >= -3 * Math.PI / 4 && angleToPlayer < -Math.PI / 4) { // Arriba derecha
+                this.anims.play('meleWalkUp', true);
+            } else if (angleToPlayer >= -Math.PI && angleToPlayer < -3 * Math.PI / 4) { // Izquierda
+                this.anims.play('meleWalkLeft', true);
+                this.setFlipX(true);  // Invertir sprite
+            } else if (angleToPlayer >= 3 * Math.PI / 4 && angleToPlayer < Math.PI) { // Abajo izquierda
+                this.anims.play('meleWalkDown', true);
+                this.setFlipX(true);  // Invertir sprite
+            } else { // Arriba izquierda
+                this.anims.play('meleWalkUp', true);
+                this.setFlipX(true);  // Invertir sprite
             }
         } else {
             // Si el jugador está fuera de rango, patrullar
             if (this.isChasing) {
                 this.isChasing = false;
-                this.body.setVelocity(0); // Detener movimiento
+                this.body.setVelocity(0);  // Detener movimiento
             }
             this.move(delta);
         }
     }
-    
-    /*
-    shootArrow() {
-        const arrow = new Arrow(this.scene, this.x, this.y, this.player);
-        arrow.fire();
-    }
-    */
 
+    update(time, delta) {
+        if (this.type === 'mele') {
+            this.handleMeleBehavior(delta);
+        } else if (this.type === 'ranger') {
+            //this.handleRangerBehavior(delta);
+        }  
+    }
+    
     setColliders() {
         // Colisión con paredes
         if (this.scene.walls) {

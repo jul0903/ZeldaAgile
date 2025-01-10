@@ -29,6 +29,7 @@ export default class exteriorCastle extends Phaser.Scene
 
         //ENEMIES
         this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
+        this.load.spritesheet('enemiesArrow', 'sprEnemiesArrow.png', { frameWidth: 15, frameHeight: 15});
 
         //NPCs
         this.load.spritesheet('npc', 'sprNpc.png', { frameWidth: 16, frameHeight: 24});
@@ -65,13 +66,16 @@ export default class exteriorCastle extends Phaser.Scene
          // Crear un grupo para manejar enemigos
         this.enemies = this.add.group();
 
-        this.enemies = this.add.group();
-
         const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
-        const rangerEnemy = new enemiesPrefab(this, 300, 750, 'ranger', this.link).setDepth(1);
+        const rangerEnemy = new enemiesPrefab(this, 500, 650, 'ranger', this.link).setDepth(1);
 
         this.enemies.add(meleEnemy);
         this.enemies.add(rangerEnemy);
+
+        this.arrows = this.physics.add.group({
+            classType: Phaser.Physics.Arcade.Sprite,
+            runChildUpdate: true,
+        });
         
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
@@ -118,6 +122,12 @@ export default class exteriorCastle extends Phaser.Scene
         // Llama al método update de cada enemigo en el grupo
         this.enemies.getChildren().forEach((enemy) => {
             enemy.update(time, delta);
+        });
+
+        this.arrows.children.iterate((arrow) => {
+            if (arrow && (arrow.x < 0 || arrow.x > this.game.config.width || arrow.y < 0 || arrow.y > this.game.config.height)) {
+                arrow.setActive(false).setVisible(false); // Desactivar flecha fuera de pantalla
+            }
         });
     }    
 }
