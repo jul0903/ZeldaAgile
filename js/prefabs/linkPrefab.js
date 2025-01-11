@@ -14,6 +14,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.cursors = this.scene.input.keyboard.createCursorKeys();
         this.loadAnimations();
         this.anims.play('idleDown',true);
+        this.hp = 3;
     }
 
    loadAnimations()
@@ -43,7 +44,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'walkDown',
             frames:this.anims.generateFrameNumbers('linkWalk', {start:0, end:8}),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
@@ -51,7 +52,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'walkRight',
             frames:this.anims.generateFrameNumbers('linkWalk', {start:9, end:16}),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
@@ -59,7 +60,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'walkUp',
             frames:this.anims.generateFrameNumbers('linkWalk', {start:18, end:26}),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });    
    }

@@ -25,7 +25,7 @@ export default class exteriorCastle extends Phaser.Scene
         this.load.spritesheet('linkDead', 'sprLinkDead.png', { frameWidth: 24, frameHeight: 24});
 
         //UI
-        this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 16, frameHeight: 24});
+        this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 20, frameHeight: 21});
 
         //ENEMIES
         this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
@@ -61,6 +61,9 @@ export default class exteriorCastle extends Phaser.Scene
 
         // Pintar PJ
         this.link = new linkPrefab(this, 500, 700).setDepth(1);
+        this.add.image(15+180,10,'ui', 2).setScrollFactor(0);
+        this.add.image(15+190,10,'ui', 2).setScrollFactor(0);
+        this.add.image(15+200,10,'ui', 2).setScrollFactor(0);
 
         // Crear enemigos y pasar referencia del jugador
          // Crear un grupo para manejar enemigos

@@ -223,6 +223,8 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
             frameRate: 1, 
             repeat: -1    
         });
+
+        
     } 
 
     move(delta) {
