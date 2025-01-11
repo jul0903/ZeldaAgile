@@ -26,6 +26,7 @@ export default class exteriorCastle extends Phaser.Scene
 
         //UI
         this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 20, frameHeight: 21});
+        this.load.spritesheet('healthBar', 'sprHealth.png', { frameWidth: 39, frameHeight: 20});
 
         //ENEMIES
         this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
@@ -60,13 +61,14 @@ export default class exteriorCastle extends Phaser.Scene
         this.walls = this.map.createLayer('Collisions', 'CastilloZelda');
 
         // Pintar PJ
-        this.link = new linkPrefab(this, 500, 700).setDepth(1);
-        this.add.image(15+180,10,'ui', 2).setScrollFactor(0);
-        this.add.image(15+190,10,'ui', 2).setScrollFactor(0);
-        this.add.image(15+200,10,'ui', 2).setScrollFactor(0);
+        this.link = new linkPrefab(this, 500, 700);  
 
-        // Crear enemigos y pasar referencia del jugador
-         // Crear un grupo para manejar enemigos
+        // HP Link
+        this.healthBar = this.add.sprite(210, 10, 'healthBar').setScrollFactor(0);
+
+        this.link.healthBar = this.healthBar; 
+
+        // Enemies
         this.enemies = this.add.group();
 
         const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
@@ -75,6 +77,7 @@ export default class exteriorCastle extends Phaser.Scene
         this.enemies.add(meleEnemy);
         this.enemies.add(rangerEnemy);
 
+        // Flechas
         this.arrows = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Sprite,
             runChildUpdate: true,
@@ -90,8 +93,8 @@ export default class exteriorCastle extends Phaser.Scene
         this.cameras.main.startFollow(this.link);
         this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
         
-        
         this.game_elements = this.map.getObjectLayer('Arbustos');
+        this.game_elements = this.map.getObjectLayer('NPC');
         this.game_elements.objects.forEach(function (element)
         {
             switch(element.type)
@@ -103,6 +106,16 @@ export default class exteriorCastle extends Phaser.Scene
                              posX:element.x,
                              posY:element.y,
                              spriteTag:element.type,
+                            });
+                        break;
+
+                    case 'npc':
+                        this.npc = new bushPrefab (
+                            this,
+                            {
+                                posX:element.x,
+                                posY:element.y,
+                                spriteTag:element.type,
                             });
                         break;
 
@@ -132,5 +145,14 @@ export default class exteriorCastle extends Phaser.Scene
                 arrow.setActive(false).setVisible(false); // Desactivar flecha fuera de pantalla
             }
         });
+    
+        
+        if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('A'))) {
+            this.link.takeDamage(1);  // El jugador recibe 1 de daño
+        }
+    
+        if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('D'))) {
+            this.link.heal(1);  // El jugador se cura 1 punto de vida
+        }
     }    
 }
