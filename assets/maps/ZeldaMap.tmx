@@ -284,7 +284,7 @@
   </object>
  </objectgroup>
  <objectgroup id="9" name="Agujero">
-  <object id="145" type="bush" x="902.182" y="165.182" width="16" height="16"/>
+  <object id="145" type="agujero" x="902.182" y="165.182" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="7" name="NPC">
   <object id="141" name="NPC" type="NPC" x="512" y="667">

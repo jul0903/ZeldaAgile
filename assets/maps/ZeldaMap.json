@@ -1674,6 +1674,28 @@
         }, 
         {
          "draworder":"topdown",
+         "id":9,
+         "name":"Agujero",
+         "objects":[
+                {
+                 "height":16,
+                 "id":145,
+                 "name":"",
+                 "rotation":0,
+                 "type":"agujero",
+                 "visible":true,
+                 "width":16,
+                 "x":902.182,
+                 "y":165.182
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":7,
          "name":"NPC",
          "objects":[
@@ -1842,8 +1864,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":8,
- "nextobjectid":144,
+ "nextlayerid":10,
+ "nextobjectid":146,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.0",

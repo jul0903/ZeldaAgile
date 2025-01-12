@@ -14,6 +14,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         this.scene = _scene;
         this.dialogue = _npc.dialogue;  // Guardar el diálogo del NPC
         this.playerOverlapping = false; // Indicador de contacto con el jugador
+        this.dialogueDisplayed = false; // Para evitar repetir el diálogo
 
         this.setColliders();
         this.setupKeyInput();
@@ -21,7 +22,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         this.play('npc1Idle');
     }
 
-    loadAnimations(){
+    loadAnimations() {
         this.anims.create({
             key: 'npc1Idle',
             frames: this.anims.generateFrameNumbers('npc', { start: 0, end: 1 }),
@@ -29,9 +30,6 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
 
-    }
-
-    loadAnimations(){
         this.anims.create({
             key: 'npc2Idle',
             frames: this.anims.generateFrameNumbers('npc', { start: 2, end: 3 }),
@@ -39,24 +37,21 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
 
-    }
-
-    loadAnimations(){
         this.anims.create({
             key: 'npc3Idle',
             frames: this.anims.generateFrameNumbers('npc', { start: 4, end: 5 }),
             frameRate: 2,
             repeat: -1
         });
-
     }
+
     setColliders() {
-        // Detectar colisión física con el jugador
+        // Detectar colisión con el jugador
         this.scene.physics.add.collider(
             this.scene.link, // El jugador
             this,            // Este NPC
             () => {
-                this.playerOverlapping = true; // Marcar que está en contacto
+                this.playerOverlapping = true; // El jugador está en contacto con el NPC
                 console.log('Jugador en contacto con NPC');
             },
             null,
@@ -68,8 +63,9 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
             this.scene.link,
             this,
             () => {
-                this.playerOverlapping = false; // Ya no hay contacto
+                this.playerOverlapping = false; // El jugador ya no está en contacto
                 console.log('Jugador fuera del contacto con NPC');
+                this.dialogueDisplayed = false; // Reiniciar el flag del diálogo cuando el jugador deje de estar en contacto
             },
             null,
             this
@@ -77,11 +73,11 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
     }
 
     setupKeyInput() {
-        // Detectar la tecla "E"
+        // Detectar la tecla "E" solo cuando está colisionando
         this.scene.input.keyboard.on('keydown-E', () => {
-            if (this.playerOverlapping) {
+            if (this.playerOverlapping && !this.dialogueDisplayed) {
                 console.log(`NPC dice: "${this.dialogue}"`);
-                this.showDialogue(); // Mostrar el diálogo
+                this.showDialogue(); // Mostrar el diálogo solo si está en contacto
             }
         });
     }
@@ -90,7 +86,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         // Crear el diálogo box en la parte inferior, fijado en la UI
         const dialogueBox = this.scene.add.image(this.scene.game.config.width / 2, this.scene.game.config.height - 30, 'dialogueBox');
         dialogueBox.setOrigin(0.5);  // Centrar la imagen
-        dialogueBox.setScale(0.8);     // No cambiar la escala, ya que ya la has reducido
+        dialogueBox.setScale(0.8);   // No cambiar la escala, ya que ya la has reducido
         dialogueBox.setScrollFactor(0);  // Fijar en UI
     
         // Estilo para el texto sin fondo negro y con borde azul
@@ -112,5 +108,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
             dialogueBox.destroy();   // Eliminar el dialogueBox
             dialogueText.destroy();  // Eliminar el texto
         });
+
+        this.dialogueDisplayed = true; // Marcar que el diálogo ya ha sido mostrado
     }    
 }
