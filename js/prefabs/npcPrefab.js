@@ -67,14 +67,30 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
     }
 
     showDialogue() {
-        // Aquí puedes personalizar cómo mostrar el diálogo
-        const style = { font: '16px Arial', fill: '#ffffff', backgroundColor: '#000000' };
-        const dialogueText = this.scene.add.text(this.x, this.y - 20, this.dialogue, style);
-        dialogueText.setOrigin(0.5);
-
-        // Ocultar el diálogo después de 3 segundos
+        // Crear el diálogo box en la parte inferior, fijado en la UI
+        const dialogueBox = this.scene.add.image(this.scene.game.config.width / 2, this.scene.game.config.height - 30, 'dialogueBox');
+        dialogueBox.setOrigin(0.5);  // Centrar la imagen
+        dialogueBox.setScale(0.8);     // No cambiar la escala, ya que ya la has reducido
+        dialogueBox.setScrollFactor(0);  // Fijar en UI
+    
+        // Estilo para el texto sin fondo negro y con borde azul
+        const style = {
+            font: '12px Arial', 
+            fill: '#ffffff', // Color del texto
+            stroke: '#0000ff', // Borde azul
+            strokeThickness: 3, // Grosor del borde
+            wordWrap: { width: 800, useAdvancedWrap: true }
+        };
+    
+        // Crear el texto dentro del box, alineado en el centro
+        const dialogueText = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height - 30, this.dialogue, style);
+        dialogueText.setOrigin(0.5);  // Alinear el texto en el centro
+        dialogueText.setScrollFactor(0);  // Fijar el texto en UI
+    
+        // Mostrar el diálogo y eliminarlo después de 3 segundos
         this.scene.time.delayedCall(3000, () => {
-            dialogueText.destroy();
+            dialogueBox.destroy();   // Eliminar el dialogueBox
+            dialogueText.destroy();  // Eliminar el texto
         });
-    }
+    }    
 }

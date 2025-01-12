@@ -36,6 +36,8 @@ export default class exteriorCastle extends Phaser.Scene
         //NPCs
         this.load.spritesheet('npc', 'sprNpc.png', { frameWidth: 16, frameHeight: 24});
         this.load.image('npc1', 'sprNpc1.png');
+            //dialogue
+            this.load.image('dialogueBox', 'dialogueBox.png');
         
         //MAP
         this.load.setPath('assets/tilesets'); 
