@@ -151,6 +151,25 @@ export default class exteriorCastle extends Phaser.Scene
                 });
             }
         });
+
+        
+        this.game_elements = this.map.getObjectLayer('Agujero');
+        const agujeroLayer = this.game_elements.objects.filter(obj => obj.class === 'agujero');
+
+        agujeroLayer.forEach((element) => {
+            // Crear un área de colisión invisible (usando un rectángulo)
+            const agujeroObject = this.physics.add.staticImage(element.x, element.y, null); // null porque no usas imagen
+            
+            // Establecer el tamaño del área de colisión, puedes ajustarlo según el tamaño que necesites
+            agujeroObject.setSize(10, 10); // Ajusta el tamaño del área de colisión (10x10 píxeles en este caso)
+            agujeroObject.setOffset(-5, -5); // Ajusta la posición de la colisión si es necesario
+            
+            // Colisión con link
+            this.physics.add.collider(this.link, agujeroObject, () => {
+                this.link.anims.play('dead', true); // Ejecutar la animación "dead" al colisionar
+            });
+        });
+
     }
 
     

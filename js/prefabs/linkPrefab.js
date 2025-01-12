@@ -94,6 +94,14 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
             frameRate: 10,
             repeat: 0
         });    
+
+        this.anims.create(
+        {
+            key: 'dead',
+            frames:this.anims.generateFrameNumbers('linkDead', {start:0, end:5}),
+            frameRate: 10,
+            repeat: 0
+        });    
    }
 
     createInputKeys() {
