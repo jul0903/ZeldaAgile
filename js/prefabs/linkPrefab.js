@@ -12,16 +12,16 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.link = this;
         this.scene = _scene;
 
-        this.body.setSize(16, 26, true).setOffset(0, 0);
+        this.body.setSize(11, 12, true).setOffset(3, 12);
         this.setColliders();
         this.cursors = this.scene.input.keyboard.createCursorKeys();
         this.createInputKeys(); 
 
         this.loadAnimations();
-        this.anims.play('idleDown',true);
+        //this.anims.play('idleRight',true);
 
         this.hp = gamePrefs.LINK_MAXHEALTH;   
-        this.maxHealh = gamePrefs.LINK_MAXHEALTH;   
+        this.maxHealh = gamePrefs.LINK_MAXHEALTH;
     }
 
    loadAnimations()
@@ -110,15 +110,19 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
     }
 
     updateHealthBar() {
-        if (this.healthBar) {  // Asegúrate de que healthBar está definido
+        if (this.healthBar) { 
             if (this.hp === 3) {
+                console.log("hp=3");
                 this.healthBar.setFrame(3);  // Con 3 corazones llenos
             } else if (this.hp === 2) {
-                this.healthBar.setFrame(2);  // Con 2 corazones
+                this.healthBar.setFrame(2);
+                console.log("hp=2");  // Con 2 corazones
             } else if (this.hp === 1) {
-                this.healthBar.setFrame(1);  // Con 1 corazón
+                this.healthBar.setFrame(1);
+                console.log("hp=1");  // Con 1 corazón
             } else if (this.hp === 0) {
-                this.healthBar.setFrame(0);  // Sin corazones (muerte)
+                this.healthBar.setFrame(0);
+                console.log("hp=0");  // Sin corazones (muerte)
             }
         }
     }
@@ -179,7 +183,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
         this.handleAttack();
 
-        if (!this.lastDirection) this.lastDirection = 'down'; 
+        if (!this.lastDirection) this.lastDirection = 'left'; 
     
         if (this.cursors.left.isDown) { 
             //izquierda
