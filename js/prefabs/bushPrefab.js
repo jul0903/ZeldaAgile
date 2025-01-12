@@ -26,7 +26,6 @@ export default class bushPrefab extends Phaser.GameObjects.Sprite {
             this,            // Este arbusto
             () => {
                 this.playerOverlapping = true; // Marcar que está colisionando
-                console.log('Jugador en contacto con arbusto');
             },
             null,
             this
@@ -38,7 +37,6 @@ export default class bushPrefab extends Phaser.GameObjects.Sprite {
             this,
             () => {
                 this.playerOverlapping = false; // Ya no hay contacto
-                console.log('Jugador fuera del contacto con arbusto');
             },
             null,
             this
@@ -49,7 +47,6 @@ export default class bushPrefab extends Phaser.GameObjects.Sprite {
         // Detectar la tecla "E"
         this.scene.input.keyboard.on('keydown-E', () => {
             if (this.playerOverlapping) {
-                console.log('Destruyendo arbusto');
                 this.destroy(); // Destruir el arbusto
             }
         });

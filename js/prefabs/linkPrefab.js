@@ -112,17 +112,13 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
     updateHealthBar() {
         if (this.healthBar) { 
             if (this.hp === 3) {
-                console.log("hp=3");
-                this.healthBar.setFrame(3);  // Con 3 corazones llenos
+                this.healthBar.setFrame(3); 
             } else if (this.hp === 2) {
                 this.healthBar.setFrame(2);
-                console.log("hp=2");  // Con 2 corazones
             } else if (this.hp === 1) {
                 this.healthBar.setFrame(1);
-                console.log("hp=1");  // Con 1 corazón
             } else if (this.hp === 0) {
                 this.healthBar.setFrame(0);
-                console.log("hp=0");  // Sin corazones (muerte)
             }
         }
     }
@@ -154,20 +150,16 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
             switch (this.lastDirection) {
                 case 'left':
                     this.anims.play('attackLeft', true);
-                    console.log("left");
                     break;
                 case 'right':
                     this.setFlipX(true); 
                     this.anims.play('attackLeft', true);
-                    console.log("right");
                     break;
                 case 'up':
                     this.anims.play('attackUp', true);
-                    console.log("up");
                     break;
                 case 'down':
                     this.anims.play('attackDown', true);
-                    console.log("down");
                     break;
             }
         }
