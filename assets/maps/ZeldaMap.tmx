@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="130" height="130" tilewidth="8" tileheight="8" infinite="0" nextlayerid="8" nextobjectid="144">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="130" height="130" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="145">
  <editorsettings>
   <export target="ZeldaMap.json" format="json"/>
  </editorsettings>
@@ -143,6 +143,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="8" name="LinkStart">
+  <object id="144" name="LinkStart" type="Link" x="847.333" y="1004.67">
+   <point/>
+  </object>
+ </objectgroup>
  <objectgroup id="6" name="Arbustos" offsetx="6" offsety="5">
   <object id="6" type="bush" x="816" y="688" width="16" height="16"/>
   <object id="7" type="bush" x="816" y="704" width="16" height="16"/>

@@ -223,6 +223,8 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
             frameRate: 1, 
             repeat: -1    
         });
+
+        
     } 
 
     move(delta) {
@@ -335,6 +337,12 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
                 }
             });
         }
+    }
+
+    takeDamage(damage) {
+        this.hp -= damage;
+        if (this.hp < 0) this.hp = 0;  // Limitar la salud a 0
+        this.updateHealthBar();  // Actualizar la barra de vida
     }
 
     preUpdate(time, delta) {

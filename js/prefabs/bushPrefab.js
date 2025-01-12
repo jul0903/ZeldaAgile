@@ -1,32 +1,58 @@
-import {gamePrefs} from '../globals.js';
+import { gamePrefs } from '../globals.js';
 
-export default class bushPrefab extends Phaser.GameObjects.Sprite 
-{
-    constructor(_scene,_bush)
-    { //instanciar el objeto
-        super(_scene,_bush.posX,_bush.posY,_bush.spriteTag);
+export default class bushPrefab extends Phaser.GameObjects.Sprite {
+    constructor(_scene, _bush) {
+        super(_scene, _bush.posX, _bush.posY, _bush.spriteTag);
+
+        // Añadir el sprite al juego
         _scene.add.existing(this);
         _scene.physics.world.enable(this);
-        this.bush = this;
-        this.bush.body.setAllowGravity(false);
+
+        // Configurar el cuerpo físico del arbusto
+        this.body.setAllowGravity(false); // Sin gravedad para el arbusto
+        this.body.setImmovable(true);    // No se moverá al colisionar
+
         this.scene = _scene;
+        this.playerOverlapping = false; // Indicador de colisión física con el jugador
+
         this.setColliders();
+        this.setupKeyInput();
     }
 
-    setColliders()
-    {
-        this.scene.physics.add.collider
-        (
+    setColliders() {
+        // Detectar colisión física (no puede atravesarlo)
+        this.scene.physics.add.collider(
+            this.scene.link, // El jugador
+            this,            // Este arbusto
+            () => {
+                this.playerOverlapping = true; // Marcar que está colisionando
+                console.log('Jugador en contacto con arbusto');
+            },
+            null,
+            this
+        );
+
+        // Detectar cuando el jugador deja de colisionar
+        this.scene.physics.add.overlap(
             this.scene.link,
-            this.bush,
-            this.getBush,
+            this,
+            () => {
+                this.playerOverlapping = false; // Ya no hay contacto
+                console.log('Jugador fuera del contacto con arbusto');
+            },
             null,
             this
         );
     }
 
-    getBush()
-    {
-        this.bush.destroy();       
+    setupKeyInput() {
+        // Detectar la tecla "E"
+        this.scene.input.keyboard.on('keydown-E', () => {
+            if (this.playerOverlapping) {
+                console.log('Destruyendo arbusto');
+                this.destroy(); // Destruir el arbusto
+            }
+        });
     }
 }
+
