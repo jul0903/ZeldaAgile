@@ -52,6 +52,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
             this,            // Este NPC
             () => {
                 this.playerOverlapping = true; // El jugador está en contacto con el NPC
+                this.dialogueDisplayed = false; // Reiniciar el flag cuando el jugador vuelve a estar en contacto
                 console.log('Jugador en contacto con NPC');
             },
             null,
