@@ -99,7 +99,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'dead',
             frames:this.anims.generateFrameNumbers('linkDead', {start:0, end:5}),
-            frameRate: 10,
+            frameRate: 4,
             repeat: 0
         });    
    }
@@ -133,25 +133,22 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
     takeDamage(damage) {
         this.hp -= damage;
-        if (this.hp < 0) this.hp = 0;  // Limitar la salud a 0
-        this.updateHealthBar();  // Actualizar la barra de vida
+        if (this.hp < 0) this.hp = 0;  
+        this.updateHealthBar();  
     }
 
-    // Método para curar al jugador
     heal(amount) {
         this.hp += amount;
-        if (this.hp > this.maxHealth) this.hp = this.maxHealth;  // Limitar la salud máxima
-        this.updateHealthBar();  // Actualizar la barra de vida
+        if (this.hp > this.maxHealth) this.hp = this.maxHealth;  
+        this.updateHealthBar();  
     }
 
     handleAttack() {
         if (this.attackKey.isDown) {
             console.log("E");
 
-            // Detener cualquier animación previa
             this.anims.stop();
             
-            // Detener movimiento mientras atacas
             this.body.setVelocityX(0);
             this.body.setVelocityY(0);
 
@@ -175,8 +172,6 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
     attack() {
         console.log('Link ha atacado!');
-        // Puedes añadir aquí una animación, proyectil, o cualquier acción
-        this.anims.play('attack', true);  // Si tienes una animación de ataque
     }
 
     preUpdate(time, delta) {

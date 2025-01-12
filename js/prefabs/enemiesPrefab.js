@@ -5,29 +5,32 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         super(scene, x, y, 'enemies');
         this.scene = scene;
         this.type = type; // 'mele' o 'ranger'
-        this.player = player; // Referencia al jugador
-        this.area = 40; // Rango de detección
+        this.player = player; 
+        this.area = 40; 
         this.attacking = false;
-        // Configuración inicial
+
         scene.add.existing(this);
         scene.physics.world.enable(this);
 
         this.body.setSize(27, 38).setOffset(0, 0);
 
-        // Variables de movimiento
-        this.initialX = x; // Posición inicial
-        this.patrolDistance = 40; // Distancia de patrullaje en píxeles
-        this.speed = type === 'mele' ? 30 : 10; // Velocidad según tipo
-        this.movingRight = true; // Dirección inicial
+     
+        this.initialX = x; 
+        this.patrolDistance = 40; 
+        this.speed = type === 'mele' ? 30 : 10; 
+        this.movingRight = true; 
 
         // Animaciones
         this.loadAnimations();
         if(type=='mele')
-            this.anims.play('meleIdleRight', true); // Animación inicial
+            this.anims.play('meleIdleRight', true); 
+        /*
         else if (type=='ranger')
-            this.anims.play('rangerIdleDown', true); // Animación inicial
-        else
+            this.anims.play('rangerIdleDown', true); 
+        
+        else if
             console.log("no type detected")
+        */
 
         this.setColliders();
     }
@@ -232,22 +235,20 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
     
         const velocity = this.speed * delta / 1000;
     
-        // Movimiento horizontal (derecha e izquierda)
         if (this.movingRight) {
             this.x += velocity;
-            this.body.velocity.x = velocity;  // Aseguramos que haya movimiento en X
+            this.body.velocity.x = velocity;  
             if (this.x >= this.initialX + this.patrolDistance) {
                 this.movingRight = false;
             }
         } else {
             this.x -= velocity;
-            this.body.velocity.x = -velocity;  // Movimiento hacia la izquierda
+            this.body.velocity.x = -velocity; 
             if (this.x <= this.initialX) {
                 this.movingRight = true;
             }
         }
     
-        // Movimiento hacia abajo (Y positivo)
         if (this.movingDown) {
             this.y += velocity;
             this.body.velocity.y = velocity;
@@ -255,7 +256,7 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
                 this.movingDown = false;
             }
         }
-        // Movimiento hacia arriba (Y negativo)
+
         else if (this.movingUp) {
             this.y -= velocity;
             this.body.velocity.y = -velocity;
@@ -274,36 +275,33 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         );
     
         if (distanceToPlayer <= this.area) {
-            // Si el jugador está en rango, perseguir
+
             this.isChasing = true;
             this.scene.physics.moveToObject(this, this.player, this.speed + 40);
     
-            // Calcular el ángulo hacia el jugador
             const angleToPlayer = Phaser.Math.Angle.Between(this.x, this.y, this.player.x, this.player.y);
     
-            // Elegir animación dependiendo del ángulo
             if (angleToPlayer >= -Math.PI / 4 && angleToPlayer < Math.PI / 4) { // Derecha
                 this.anims.play('meleWalkRight', true);
-                this.setFlipX(false);  // No invertir sprite
+                this.setFlipX(false); 
             } else if (angleToPlayer >= Math.PI / 4 && angleToPlayer < 3 * Math.PI / 4) { // Abajo derecha
                 this.anims.play('meleWalkDown', true);
             } else if (angleToPlayer >= -3 * Math.PI / 4 && angleToPlayer < -Math.PI / 4) { // Arriba derecha
                 this.anims.play('meleWalkUp', true);
             } else if (angleToPlayer >= -Math.PI && angleToPlayer < -3 * Math.PI / 4) { // Izquierda
                 this.anims.play('meleWalkLeft', true);
-                this.setFlipX(true);  // Invertir sprite
+                this.setFlipX(true);  
             } else if (angleToPlayer >= 3 * Math.PI / 4 && angleToPlayer < Math.PI) { // Abajo izquierda
                 this.anims.play('meleWalkDown', true);
-                this.setFlipX(true);  // Invertir sprite
+                this.setFlipX(true);  
             } else { // Arriba izquierda
                 this.anims.play('meleWalkUp', true);
-                this.setFlipX(true);  // Invertir sprite
+                this.setFlipX(true); 
             }
         } else {
-            // Si el jugador está fuera de rango, patrullar
             if (this.isChasing) {
                 this.isChasing = false;
-                this.body.setVelocity(0);  // Detener movimiento
+                this.body.setVelocity(0);  
             }
             this.move(delta);
         }
@@ -312,9 +310,13 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
     update(time, delta) {
         if (this.type === 'mele') {
             this.handleMeleBehavior(delta);
-        } else if (this.type === 'ranger') {
-            //this.handleRangerBehavior(delta);
+        
+        } 
+        /*
+        else if (this.type === 'ranger') {
+            this.handleRangerBehavior(delta);
         }  
+        */
     }
     
     setColliders() {
@@ -330,9 +332,8 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
             this.scene.physics.add.collider(this, this.scene.link, () => {
                 if (this.type === 'mele') {
                     console.log("Link recibe daño");
-                    // Daño al jugador por colisión
                     if (this.scene.link.takeDamage) {
-                        this.scene.link.takeDamage(1); // Método para restar corazones
+                        this.scene.link.takeDamage(1); 
                     }
                 }
             });
@@ -341,8 +342,8 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
 
     takeDamage(damage) {
         this.hp -= damage;
-        if (this.hp < 0) this.hp = 0;  // Limitar la salud a 0
-        this.updateHealthBar();  // Actualizar la barra de vida
+        if (this.hp < 0) this.hp = 0;  
+        this.updateHealthBar(); 
     }
 
     preUpdate(time, delta) {

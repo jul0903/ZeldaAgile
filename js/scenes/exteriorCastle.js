@@ -70,7 +70,7 @@ export default class exteriorCastle extends Phaser.Scene
         // HP Link
         this.healthBar = this.add.sprite(210, 10, 'healthBar').setScrollFactor(0);
 
-        this.link.healthBar = this.healthBar; 
+        this.link.healthBar = this.healthBar.setDepth(2); 
 
         // Enemies
         this.enemies = this.add.group();
@@ -129,24 +129,19 @@ export default class exteriorCastle extends Phaser.Scene
 
         this.game_elements = this.map.getObjectLayer('NPC');
         const npcLayer = this.map.getObjectLayer('NPC');
-        if (npcLayer) {
-            console.log('Capa NPC cargada correctamente.');
-        } else {
-            console.error('Capa NPC no encontrada.');
-        }
+
         this.game_elements.objects.forEach((element) => {
             if (element.type === 'NPC') {
-                // Extraer el diálogo de las propiedades
+        
                 const dialogueProperty = element.properties.find(prop => prop.name === 'Dialogue');
-                const npcDialogue = dialogueProperty ? dialogueProperty.value : '...';  // Establecer el valor del diálogo
+                const npcDialogue = dialogueProperty ? dialogueProperty.value : '...'; 
         
                 console.log(`Creando NPC en (${element.x}, ${element.y}) con diálogo: "${npcDialogue}"`);
         
-                // Crear una nueva instancia de npcPrefab
                 new npcPrefab(this, {
                     posX: element.x,
                     posY: element.y,
-                    spriteTag: 'npc',     // Usar el sprite adecuado
+                    spriteTag: 'npc',     
                     dialogue: npcDialogue,
                 });
             }
@@ -154,35 +149,56 @@ export default class exteriorCastle extends Phaser.Scene
 
         
         this.game_elements = this.map.getObjectLayer('Agujero');
-        const agujeroLayer = this.game_elements.objects.filter(obj => obj.class === 'agujero');
+console.log('Objetos de capa Agujero:', this.game_elements);
 
-        agujeroLayer.forEach((element) => {
-            // Crear un área de colisión invisible (usando un rectángulo)
-            const agujeroObject = this.physics.add.staticImage(element.x, element.y, null); // null porque no usas imagen
-            
-            // Establecer el tamaño del área de colisión, puedes ajustarlo según el tamaño que necesites
-            agujeroObject.setSize(10, 10); // Ajusta el tamaño del área de colisión (10x10 píxeles en este caso)
-            agujeroObject.setOffset(-5, -5); // Ajusta la posición de la colisión si es necesario
-            
-            // Colisión con link
-            this.physics.add.collider(this.link, agujeroObject, () => {
-                this.link.anims.play('dead', true); // Ejecutar la animación "dead" al colisionar
+const agujeroLayer = this.game_elements.objects.filter(obj => obj.type === 'agujero');
+console.log('Agujeros filtrados:', agujeroLayer);
+
+agujeroLayer.forEach((element) => {
+    // Crear un área de colisión invisible (usando un rectángulo)
+    const agujeroObject = this.physics.add.staticImage(element.x, element.y, null); // null porque no usas imagen
+    console.log(`Área de colisión creada en X: ${element.x}, Y: ${element.y}`);
+
+    // Establecer el tamaño del área de colisión (ajustado al tamaño del objeto)
+    const offsetX = element.width / 2;
+    const offsetY = element.height / 2;
+
+    // Usamos el tamaño real del objeto para el área de colisión
+    agujeroObject.setSize(element.width/2, element.height/2);
+    agujeroObject.setOrigin(0.5, 0.5);  // Centrar el origen de la colisión en el centro de la imagen
+
+    // Colisión con link
+    this.physics.add.collider(this.link, agujeroObject, () => {
+        console.log('¡Colisión detectada con el agujero!');
+
+        // Si la animación no está en ejecución, ejecutamos la animación de muerte
+        if (!this.link.anims.isPlaying || this.link.anims.currentAnim.key !== 'dead') {
+            console.log('Ejecutando animación de muerte');
+            this.link.anims.play('dead', true); // Ejecutar la animación "dead" al colisionar
+
+            // Después de la animación de muerte, reiniciamos al personaje
+            this.link.once('animationcomplete', () => {
+                console.log('Animación de muerte completada, reiniciando link...');
+                this.link.setPosition(600, 920); // Reposicionar link en su "spawn"
+                this.link.anims.stop(); // Detener cualquier animación que esté jugando
             });
-        });
+        } else {
+            console.log('La animación de muerte ya está en ejecución');
+        }
+    });
+});
 
     }
 
     
-
     update(time, delta) {
-        // Llama al método update de cada enemigo en el grupo
         this.enemies.getChildren().forEach((enemy) => {
             enemy.update(time, delta);
         });
 
         this.arrows.children.iterate((arrow) => {
             if (arrow && (arrow.x < 0 || arrow.x > this.game.config.width || arrow.y < 0 || arrow.y > this.game.config.height)) {
-                arrow.setActive(false).setVisible(false); // Desactivar flecha fuera de pantalla
+                arrow.setActive(false).setVisible(false); 
             }
         });
 
