@@ -30,6 +30,26 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         });
 
     }
+
+    loadAnimations(){
+        this.anims.create({
+            key: 'npc2Idle',
+            frames: this.anims.generateFrameNumbers('npc', { start: 2, end: 3 }),
+            frameRate: 2,
+            repeat: -1
+        });
+
+    }
+
+    loadAnimations(){
+        this.anims.create({
+            key: 'npc3Idle',
+            frames: this.anims.generateFrameNumbers('npc', { start: 4, end: 5 }),
+            frameRate: 2,
+            repeat: -1
+        });
+
+    }
     setColliders() {
         // Detectar colisión física con el jugador
         this.scene.physics.add.collider(
