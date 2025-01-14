@@ -145,28 +145,55 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
     handleAttack() {
         if (this.attackKey.isDown) {
-            console.log("E");
-
+            console.log("Attack key is pressed"); // Verifica que la tecla de ataque está activa
             this.anims.stop();
-            
+    
             this.body.setVelocityX(0);
             this.body.setVelocityY(0);
-
+    
+            console.log("Last direction:", this.lastDirection); // Muestra la última dirección del jugador
+    
+            let animationKey; // Variable para almacenar el nombre de la animación que se ejecutará
+    
             switch (this.lastDirection) {
                 case 'left':
-                    this.anims.play('attackLeft', true);
+                    animationKey = 'attackLeft';
+                    console.log("Attempting to play:", animationKey);
+                    this.anims.play(animationKey, true);
                     break;
                 case 'right':
+                    animationKey = 'attackLeft';
+                    console.log("Attempting to play:", animationKey, "with FlipX");
                     this.setFlipX(true); 
-                    this.anims.play('attackLeft', true);
+                    this.anims.play(animationKey, true);
                     break;
                 case 'up':
-                    this.anims.play('attackUp', true);
+                    animationKey = 'attackUp';
+                    console.log("Attempting to play:", animationKey);
+                    this.anims.play(animationKey, true);
                     break;
                 case 'down':
-                    this.anims.play('attackDown', true);
+                    animationKey = 'attackDown';
+                    console.log("Attempting to play:", animationKey);
+                    this.anims.play(animationKey, true);
                     break;
+                default:
+                    console.log("No valid direction for attack animation");
             }
+    
+            // Listener para asegurarnos de que la animación realmente comienza
+            this.on('animationstart', (anim, frame) => {
+                if (anim.key === animationKey) {
+                    console.log("Animation started:", anim.key);
+                }
+            });
+    
+            // Listener para confirmar que la animación termina
+            this.on('animationcomplete', (anim, frame) => {
+                if (anim.key === animationKey) {
+                    console.log("Animation completed:", anim.key);
+                }
+            });
         }
     }
 
@@ -175,7 +202,17 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
     }
 
     preUpdate(time, delta) {
+        //switch state : máquina de estados
 
+        this.state = 'walk';
+
+        switch(this.state)
+        {
+
+
+
+            
+        }
         this.handleAttack();
 
         if (!this.lastDirection) this.lastDirection = 'left'; 
