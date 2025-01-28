@@ -155,37 +155,11 @@ export default class exteriorCastle extends Phaser.Scene
         console.log('Agujeros filtrados:', agujeroLayer);
 
         agujeroLayer.forEach((element) => {
-            // Crear un área de colisión invisible (usando un rectángulo)
-            const agujeroObject = this.physics.add.staticImage(element.x, element.y, null); // null porque no usas imagen
-            console.log(`Área de colisión creada en X: ${element.x}, Y: ${element.y}`);
-
-            // Establecer el tamaño del área de colisión (ajustado al tamaño del objeto)
-            const offsetX = element.width / 2;
-            const offsetY = element.height / 2;
-
-            // Usamos el tamaño real del objeto para el área de colisión
-            agujeroObject.setSize(element.width/2, element.height/2);
-            agujeroObject.setOrigin(0.5, 0.5);  // Centrar el origen de la colisión en el centro de la imagen
-
-            // Colisión con link
-            this.physics.add.collider(this.link, agujeroObject, () => {
-                console.log('¡Colisión detectada con el agujero!');
-
-                // Si la animación no está en ejecución, ejecutamos la animación de muerte
-                if (!this.link.anims.isPlaying || this.link.anims.currentAnim.key !== 'dead') {
-                    console.log('Ejecutando animación de muerte');
-                    this.link.anims.play('dead', true); // Ejecutar la animación "dead" al colisionar
-
-                    // Después de la animación de muerte, reiniciamos al personaje
-                    this.link.once('animationcomplete', () => {
-                        console.log('Animación de muerte completada, reiniciando link...');
-                        this.link.setPosition(600, 920); // Reposicionar link en su "spawn"
-                        this.link.anims.stop(); // Detener cualquier animación que esté jugando
-                    });
-                } else {
-                    console.log('La animación de muerte ya está en ejecución');
-                }
-            });
+            const agujeroObject = this.physics.add.staticImage(element.x, element.y, null);
+            agujeroObject.setSize(element.width / 2, element.height / 2);
+            agujeroObject.setOrigin(0.5, 0.5);
+        
+            this.link.checkCollisionWithAgujero(agujeroObject);
         });
 
     }

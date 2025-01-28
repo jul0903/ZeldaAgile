@@ -73,7 +73,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
         this.anims.create(
         {
-            key: 'attackLeft',
+            key: 'attackRight',
             frames:this.anims.generateFrameNumbers('linkSword', {start:0, end:6}),
             frameRate: 10,
             repeat: 0
@@ -143,116 +143,42 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.updateHealthBar();  
     }
 
-    handleAttack() {
-        if (this.attackKey.isDown) {
-            console.log("Attack key is pressed"); // Verifica que la tecla de ataque está activa
-            this.anims.stop();
+    handleMovement() {
+        if (this.state !== 'walk') return; // Prevent movement during other states
     
-            this.body.setVelocityX(0);
-            this.body.setVelocityY(0);
+        if (!this.lastDirection) this.lastDirection = 'left';
     
-            console.log("Last direction:", this.lastDirection); // Muestra la última dirección del jugador
-    
-            let animationKey; // Variable para almacenar el nombre de la animación que se ejecutará
-    
-            switch (this.lastDirection) {
-                case 'left':
-                    animationKey = 'attackLeft';
-                    console.log("Attempting to play:", animationKey);
-                    this.anims.play(animationKey, true);
-                    break;
-                case 'right':
-                    animationKey = 'attackLeft';
-                    console.log("Attempting to play:", animationKey, "with FlipX");
-                    this.setFlipX(true); 
-                    this.anims.play(animationKey, true);
-                    break;
-                case 'up':
-                    animationKey = 'attackUp';
-                    console.log("Attempting to play:", animationKey);
-                    this.anims.play(animationKey, true);
-                    break;
-                case 'down':
-                    animationKey = 'attackDown';
-                    console.log("Attempting to play:", animationKey);
-                    this.anims.play(animationKey, true);
-                    break;
-                default:
-                    console.log("No valid direction for attack animation");
-            }
-    
-            // Listener para asegurarnos de que la animación realmente comienza
-            this.on('animationstart', (anim, frame) => {
-                if (anim.key === animationKey) {
-                    console.log("Animation started:", anim.key);
-                }
-            });
-    
-            // Listener para confirmar que la animación termina
-            this.on('animationcomplete', (anim, frame) => {
-                if (anim.key === animationKey) {
-                    console.log("Animation completed:", anim.key);
-                }
-            });
-        }
-    }
-
-    attack() {
-        console.log('Link ha atacado!');
-    }
-
-    preUpdate(time, delta) {
-        //switch state : máquina de estados
-
-        this.state = 'walk';
-
-        switch(this.state)
-        {
-
-
-
-            
-        }
-        this.handleAttack();
-
-        if (!this.lastDirection) this.lastDirection = 'left'; 
-    
-        if (this.cursors.left.isDown) { 
-            //izquierda
+        if (this.cursors.left.isDown) {
             this.body.setVelocityX(-gamePrefs.LINK_SPEED);
-            this.body.setVelocityY(0); // Para evitar movimientos diagonales
-            this.setFlipX(true); 
-            this.anims.play('walkRight', true); 
-            this.lastDirection = 'left'; 
+            this.body.setVelocityY(0);
+            this.setFlipX(true);
+            this.anims.play('walkRight', true);
+            this.lastDirection = 'left';
         } else if (this.cursors.right.isDown) {
-            //derecha
             this.body.setVelocityX(gamePrefs.LINK_SPEED);
             this.body.setVelocityY(0);
             this.setFlipX(false);
             this.anims.play('walkRight', true);
             this.lastDirection = 'right';
         } else if (this.cursors.up.isDown) {
-            //arriba
             this.body.setVelocityY(-gamePrefs.LINK_SPEED);
             this.body.setVelocityX(0);
             this.setFlipX(false);
             this.anims.play('walkUp', true);
             this.lastDirection = 'up';
         } else if (this.cursors.down.isDown) {
-            //abajo
             this.body.setVelocityY(gamePrefs.LINK_SPEED);
             this.body.setVelocityX(0);
             this.setFlipX(false);
             this.anims.play('walkDown', true);
             this.lastDirection = 'down';
         } else {
-            //idle
             this.body.setVelocityX(0);
             this.body.setVelocityY(0);
             switch (this.lastDirection) {
                 case 'left':
                     this.setFlipX(true);
-                    this.anims.play('idleRight', true); 
+                    this.anims.play('idleRight', true);
                     break;
                 case 'right':
                     this.setFlipX(false);
@@ -266,7 +192,82 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
                     break;
             }
         }
+    }
 
+    attack()
+    {
+            this.body.setVelocity(0, 0); // Stop movement during attack
+    
+            switch (this.lastDirection) {
+                case 'left':
+                    this.setFlipX(false);
+                    this.anims.play('attackRight', true);
+                    break;
+                case 'right':
+                    this.setFlipX(true);
+                    this.anims.play('attackRight', true);
+                    break;
+                case 'up':
+                    this.anims.play('attackUp', true);
+                    break;
+                case 'down':
+                    this.anims.play('attackDown', true);
+                    break;
+            }
+    
+            this.once('animationcomplete', () => {
+                this.state = 'walk'; // Return to walk state after attack
+            });
+    }
+    
+    handleAttack() {
+        if (this.attackKey.isDown) {
+            this.state = 'attack';
+        }
+    }
+    
+    handleFall() {
+        if (this.state !== 'fall') return;
+    
+        if (!this.anims.isPlaying || this.anims.currentAnim.key !== 'dead') {
+            this.anims.play('dead', true);
+        }
+    
+        this.once('animationcomplete', () => {
+            this.scene.scene.start('swordLevel'); // Transition to the swordLevel scene
+        });
+    }
+    
+    checkCollisionWithAgujero(agujeroObject) {
+        this.scene.physics.add.collider(this, agujeroObject, () => {
+            if (this.state !== 'fall') {
+                this.state = 'fall'; // Trigger fall state
+            }
+        });
+    }
+
+    preUpdate(time, delta) {
+        this.handleAttack();
+
+        switch (this.state) {
+            case 'walk':
+                this.handleMovement(); // Movement logic
+                break;
+    
+            case 'fall':
+                this.handleFall(); // Fall logic
+                break;
+    
+            case 'attack':
+                this.attack(); // Attack logic
+                break;
+    
+            default:
+                this.state = 'walk';
+                this.handleMovement();
+                break;
+        }
+    
         super.preUpdate(time, delta);
     }
 }
