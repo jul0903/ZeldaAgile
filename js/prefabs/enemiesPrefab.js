@@ -24,14 +24,13 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         this.loadAnimations();
         if(type=='mele')
             this.anims.play('meleIdleRight', true); 
-        /*
+        
         else if (type=='ranger')
             this.anims.play('rangerIdleDown', true); 
         
-        else if
+        else 
             console.log("no type detected")
-        */
-
+        
         this.setColliders();
     }
 
