@@ -22,11 +22,11 @@ export default class swordLevel extends Phaser.Scene
         this.load.spritesheet('linkWalk', 'sprLinkWalking.png', { frameWidth: 16, frameHeight: 26,transparentColor: '#004040'});
 
         this.load.setPath('assets/tilesets'); // Declarar tiled
-        this.load.image('Background', 'SwordDungeon.png');
+        this.load.image('Background2', 'SwordDungeon.png');
         //this.load.image('changeScene', '');
 
         this.load.setPath('assets/maps'); // Declarar mapa
-        this.load.tilemapTiledJSON('FirstDungeon', 'FirstDungeon.json');
+        this.load.tilemapTiledJSON('Dungeon', 'Dungeon.json');
 
 
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -34,14 +34,14 @@ export default class swordLevel extends Phaser.Scene
 
     create()
     {
-        this.add.sprite(230, 100, 'Background');
-        this.add.image('Background');
+        this.add.sprite(464/2, 176/2, 'Background2');
+        this.add.image('Background2');
         
         // Cargamos JSON
-        //this.map = this.add.tilemap('FirstDungeon');
+        this.map = this.add.tilemap('Dungeon');
 
         // Pintar capas
-        //this.walls = this.map.createLayer('Collisions', 'FirstDungeon');
+        this.walls = this.map.createLayer('Collisions', 'Dungeon').setVisible(false);
 
         // Pintar PJ
         this.link = new linkPrefab(this, 380, 110).setDepth(1);
@@ -50,7 +50,7 @@ export default class swordLevel extends Phaser.Scene
         //this.map.createLayer('Superior', 'SwordDungeon');
         
         // COLISIONES
-        //this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
+        this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
         
         // CAMARA
         this.cameras.main.startFollow(this.link);
