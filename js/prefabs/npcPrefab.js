@@ -19,7 +19,13 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         this.setColliders();
         this.setupKeyInput();
         this.loadAnimations();
-        this.play('npc1Idle');
+
+        const idleAnimation = `${_npc.spriteTag}Idle`;
+
+        if (this.anims.exists(idleAnimation)) {
+            this.play(idleAnimation);
+        }
+        
     }
 
     loadAnimations() {

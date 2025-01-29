@@ -111,12 +111,18 @@
                  "id":1,
                  "name":"NPCSword",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"Dialogue",
+                         "type":"string",
+                         "value":"Toma tu espadita"
+                        }],
                  "rotation":0,
-                 "type":"",
+                 "type":"NPC",
                  "visible":true,
                  "width":0,
-                 "x":232.620500100556,
-                 "y":55.6412147214587
+                 "x":232.621,
+                 "y":55.6412
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -127,8 +133,6 @@
         {
          "id":2,
          "image":"..\/tilesets\/SwordDungeon.png",
-         "imageheight":176,
-         "imagewidth":464,
          "name":"Reference",
          "opacity":0.57,
          "type":"imagelayer",
@@ -140,7 +144,7 @@
  "nextobjectid":2,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.2",
+ "tiledversion":"1.11.0",
  "tileheight":2,
  "tilesets":[
         {

@@ -128,7 +128,6 @@ export default class exteriorCastle extends Phaser.Scene
         },this);
 
         this.game_elements = this.map.getObjectLayer('NPC');
-        const npcLayer = this.map.getObjectLayer('NPC');
 
         this.game_elements.objects.forEach((element) => {
             if (element.type === 'NPC') {
@@ -141,7 +140,7 @@ export default class exteriorCastle extends Phaser.Scene
                 new npcPrefab(this, {
                     posX: element.x,
                     posY: element.y,
-                    spriteTag: 'npc',     
+                    spriteTag: 'npc1',     
                     dialogue: npcDialogue,
                 });
             }
