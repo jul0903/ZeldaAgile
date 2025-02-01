@@ -116,16 +116,6 @@ export default class exteriorCastle extends Phaser.Scene
                             });
                         break;
 
-                    
-                    //case 'changeScene':
-                      //  this.changeScene = new changeScenePrefab (
-                        //    this,
-                          //  {
-                            // posX:element.x,
-                            // posY:element.y,
-                            //});
-                        //break;
-
                     default:
                         break;
                 }           
@@ -164,6 +154,14 @@ export default class exteriorCastle extends Phaser.Scene
         
             this.link.checkCollisionWithAgujero(agujeroObject);
         });
+
+        this.physics.add.overlap(
+            this.link.swordHitbox,  // Usamos el hitbox desde link
+            this.enemies, 
+            (sword, enemy) => {
+                enemy.takeDamage(1);  // Lógica de daño
+            }
+        );
 
     }
 

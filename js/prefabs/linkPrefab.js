@@ -18,10 +18,18 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.createInputKeys(); 
 
         this.loadAnimations();
-        //this.anims.play('idleRight',true);
 
         this.hp = gamePrefs.LINK_MAXHEALTH;   
         this.maxHealh = gamePrefs.LINK_MAXHEALTH;
+
+        this.hasSword = true;
+        this.swordHitbox = this.scene.add.zone(this.x, this.y, 14, 14); // Ajusta el tamaño según necesites
+        this.scene.physics.world.enable(this.swordHitbox);
+        this.swordHitbox.body.setAllowGravity(false);
+        this.swordHitbox.body.setImmovable(true);
+
+        // Desactivamos inicialmente el hitbox
+        this.swordHitbox.active = false;  
     }
 
    loadAnimations()
@@ -75,7 +83,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'attackRight',
             frames:this.anims.generateFrameNumbers('linkSword', {start:0, end:6}),
-            frameRate: 10,
+            frameRate: 20,
             repeat: 0
         });
 
@@ -83,7 +91,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'attackUp',
             frames:this.anims.generateFrameNumbers('linkSword', {start:7, end:12}),
-            frameRate: 10,
+            frameRate: 20,
             repeat: 0
         });
 
@@ -91,7 +99,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         {
             key: 'attackDown',
             frames:this.anims.generateFrameNumbers('linkSword', {start:14, end:20}),
-            frameRate: 10,
+            frameRate: 20,
             repeat: 0
         });    
 
@@ -194,34 +202,52 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         }
     }
 
-    attack()
-    {
-            this.body.setVelocity(0, 0); // Stop movement during attack
+    attack() {
+        this.body.setVelocity(0, 0);
     
-            switch (this.lastDirection) {
-                case 'left':
-                    this.setFlipX(false);
-                    this.anims.play('attackRight', true);
-                    break;
-                case 'right':
-                    this.setFlipX(true);
-                    this.anims.play('attackRight', true);
-                    break;
-                case 'up':
-                    this.anims.play('attackUp', true);
-                    break;
-                case 'down':
-                    this.anims.play('attackDown', true);
-                    break;
-            }
+        const offset = 10; // Ajusta según el problema
+        switch (this.lastDirection) {
+            case 'left':
+                this.setFlipX(false);
+                this.setOrigin(0.37, 0.43);
+                this.body.setOffset(8, 15);
+                this.anims.play('attackRight', true);
+                this.swordHitbox.setPosition(this.x - offset, this.y);
+                break;
+            case 'right':
+                this.setFlipX(true);
+                this.setOrigin(0.37, 0.43);
+                this.body.setOffset(8, 15);
+                this.anims.play('attackRight', true);
+                this.swordHitbox.setPosition(this.x + offset, this.y);
+                break;
+            case 'up':
+                this.anims.play('attackUp', true);
+                this.setOrigin(0.55, 0.67);
+                this.body.setOffset(14, 24);
+                this.swordHitbox.setPosition(this.x, this.y - offset);
+                break;
+            case 'down':
+                this.anims.play('attackDown', true);
+                this.setOrigin(0.5, 0.45);
+                this.body.setOffset(13, 16);
+                this.swordHitbox.setPosition(this.x, this.y + offset);
+                break;
+        }
     
-            this.once('animationcomplete', () => {
-                this.state = 'walk'; // Return to walk state after attack
-            });
+        this.swordHitbox.active = true;
+        this.swordHitbox.body.enable = true;
+    
+        this.once('animationcomplete', () => {
+            this.setOrigin(0.5, 0.5);
+            this.body.setOffset(3, 12);
+            this.state = 'walk';
+            this.swordHitbox.active = false;
+        });
     }
     
     handleAttack() {
-        if (this.attackKey.isDown) {
+        if (this.hasSword && this.attackKey.isDown) {
             this.state = 'attack';
         }
     }
@@ -259,7 +285,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
                 break;
     
             case 'attack':
-                this.attack(); // Attack logic
+                this.attack(); 
                 break;
     
             default:
