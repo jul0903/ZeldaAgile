@@ -37,7 +37,7 @@ export default class exteriorCastle extends Phaser.Scene
         this.load.spritesheet('npc', 'sprNpc.png', { frameWidth: 16, frameHeight: 24});
         this.load.image('npc1', 'sprNpc1.png');
             //dialogue
-            this.load.image('dialogueBox', 'dialogueBox.png');
+            this.load.image('dialogueBox', 'dialogueBox3.png');
         
         //MAP
         this.load.setPath('assets/tilesets'); 
@@ -51,6 +51,10 @@ export default class exteriorCastle extends Phaser.Scene
 
         //INPUT
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        //DIALOGUE
+        this.load.setPath('assets/fonts/');
+        this.load.bitmapFont('textFont','textFont.png','textFont.xml');
     }
 
     create()

@@ -92,31 +92,30 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
 
     showDialogue() {
         // Crear el diálogo box en la parte inferior, fijado en la UI
-        const dialogueBox = this.scene.add.image(this.scene.game.config.width / 2, this.scene.game.config.height - 30, 'dialogueBox');
-        dialogueBox.setOrigin(0.5);  // Centrar la imagen
-        dialogueBox.setScale(0.8);   // No cambiar la escala, ya que ya la has reducido
+        const dialogueBox = this.scene.add.image(this.scene.game.config.width / 2, this.scene.game.config.height - 20, 'dialogueBox');
+        //dialogueBox.setOrigin(0.5);  
+        //dialogueBox.setScale(0.3);
         dialogueBox.setScrollFactor(0);  // Fijar en UI
     
-        // Estilo para el texto sin fondo negro y con borde azul
-        const style = {
-            font: '12px Arial', 
-            fill: '#ffffff', // Color del texto
-            stroke: '#0000ff', // Borde azul
-            strokeThickness: 3, // Grosor del borde
-            wordWrap: { width: 800, useAdvancedWrap: true }
-        };
-    
-        // Crear el texto dentro del box, alineado en el centro
-        const dialogueText = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height - 30, this.dialogue, style);
+        // Crear el texto utilizando la fuente bitmap 'textFont'
+        // El último parámetro es el tamaño (puedes ajustarlo según convenga)
+        const dialogueText = this.scene.add.bitmapText(
+            this.scene.game.config.width / 2, 
+            this.scene.game.config.height - 20, 
+            'textFont', 
+            this.dialogue, 
+            10 // tamaño de la fuente
+        );
         dialogueText.setOrigin(0.5);  // Alinear el texto en el centro
-        dialogueText.setScrollFactor(0);  // Fijar el texto en UI
+        dialogueText.setScrollFactor(0);  // Fijar el texto en la UI
     
         // Mostrar el diálogo y eliminarlo después de 3 segundos
         this.scene.time.delayedCall(3000, () => {
-            dialogueBox.destroy();   // Eliminar el dialogueBox
-            dialogueText.destroy();  // Eliminar el texto
+            dialogueBox.destroy();
+            dialogueText.destroy();
         });
-
+    
         this.dialogueDisplayed = true; // Marcar que el diálogo ya ha sido mostrado
-    }    
+    }
+    
 }
