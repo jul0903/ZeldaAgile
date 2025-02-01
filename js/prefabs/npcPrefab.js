@@ -10,6 +10,7 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         // Configurar el cuerpo físico del NPC
         this.body.setAllowGravity(false); // Sin gravedad para el NPC
         this.body.setImmovable(true);    // No se moverá al colisionar
+        this.body.setSize(16, 24).setOffset(0, 0);  
 
         this.scene = _scene;
         this.dialogue = _npc.dialogue;  // Guardar el diálogo del NPC
