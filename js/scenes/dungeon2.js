@@ -1,5 +1,9 @@
 import {gamePrefs} from '../globals.js';
 
+import linkPrefab from '/js/prefabs/linkPrefab.js';
+import npcPrefab from '../prefabs/npcPrefab.js';
+import bushPrefab from '/js/prefabs/bushPrefab.js';
+
 export default class dungeon2 extends Phaser.Scene
 {
     constructor()
