@@ -37,7 +37,7 @@ export default class exteriorCastle extends Phaser.Scene
         this.load.spritesheet('npc', 'sprNpc.png', { frameWidth: 16, frameHeight: 24});
         this.load.image('npc1', 'sprNpc1.png');
             //dialogue
-            this.load.image('dialogueBox', 'dialogueBox.png');
+            this.load.image('dialogueBox', 'dialogueBox3.png');
         
         //MAP
         this.load.setPath('assets/tilesets'); 
@@ -51,6 +51,10 @@ export default class exteriorCastle extends Phaser.Scene
 
         //INPUT
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        //DIALOGUE
+        this.load.setPath('assets/fonts/');
+        this.load.bitmapFont('textFont','textFont.png','textFont.xml');
     }
 
     create()
@@ -112,23 +116,12 @@ export default class exteriorCastle extends Phaser.Scene
                             });
                         break;
 
-                    
-                    //case 'changeScene':
-                      //  this.changeScene = new changeScenePrefab (
-                        //    this,
-                          //  {
-                            // posX:element.x,
-                            // posY:element.y,
-                            //});
-                        //break;
-
                     default:
                         break;
                 }           
         },this);
 
         this.game_elements = this.map.getObjectLayer('NPC');
-        const npcLayer = this.map.getObjectLayer('NPC');
 
         this.game_elements.objects.forEach((element) => {
             if (element.type === 'NPC') {
@@ -141,7 +134,7 @@ export default class exteriorCastle extends Phaser.Scene
                 new npcPrefab(this, {
                     posX: element.x,
                     posY: element.y,
-                    spriteTag: 'npc',     
+                    spriteTag: 'npc1',     
                     dialogue: npcDialogue,
                 });
             }
@@ -161,6 +154,14 @@ export default class exteriorCastle extends Phaser.Scene
         
             this.link.checkCollisionWithAgujero(agujeroObject);
         });
+
+        this.physics.add.overlap(
+            this.link.swordHitbox,  // Usamos el hitbox desde link
+            this.enemies, 
+            (sword, enemy) => {
+                enemy.takeDamage(1);  // Lógica de daño
+            }
+        );
 
     }
 

@@ -111,14 +111,26 @@
                  "id":1,
                  "name":"NPCSword",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"Dialogue",
+                         "type":"string",
+                         "value":"Toma tu espadita"
+                        }],
                  "rotation":0,
-                 "type":"",
+                 "type":"NPC",
                  "visible":true,
                  "width":0,
-                 "x":232.620500100556,
-                 "y":55.6412147214587
+                 "x":232.621,
+                 "y":45.6412
                 }],
          "opacity":1,
+         "properties":[
+                {
+                 "name":"Dialogue",
+                 "type":"string",
+                 "value":"Toma tu espadita"
+                }],
          "type":"objectgroup",
          "visible":true,
          "x":0,
