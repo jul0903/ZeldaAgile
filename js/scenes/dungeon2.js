@@ -32,16 +32,12 @@ export default class dungeon2 extends Phaser.Scene
         this.map = this.add.tilemap('Dungeon2');
 
         // Pintar capas
-        this.walls = this.map.createLayer('Collisions', 'Dungeon2');
+        this.walls = this.map.createLayer('Collisions', 'Dungeon2').setVisible(false);
 
         // Pintar PJ
-        this.link = new linkPrefab(this, 100, 100).setDepth(1);  
+        this.link = new linkPrefab(this, 92, 77).setDepth(1);
 
         this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
-                
-        // CAMARA
-        this.cameras.main.startFollow(this.link);
-        this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
         
         this.game_elements = this.map.getObjectLayer('Objects');
         this.game_elements.objects.forEach(function (element)
@@ -64,9 +60,25 @@ export default class dungeon2 extends Phaser.Scene
                         break;
                 }           
         },this);
+
+        // CAMARA
+        this.cameras.main.startFollow(this.link);
+        this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
+
+        //debug
+        this.key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.key3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
     }
 
     update(time, delta) 
     {
+        if (Phaser.Input.Keyboard.JustDown(this.key2)) {
+            this.scene.start('swordLevel');
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.key1)) {
+            this.scene.start('exteriorCastle');
+        }
     }
 }

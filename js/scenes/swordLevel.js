@@ -95,9 +95,21 @@ export default class swordLevel extends Phaser.Scene {
         // Configuración de la cámara para que siga al jugador
         this.cameras.main.startFollow(this.link);
         this.cameras.main.setBounds(0, 0, gamePrefs.level1Width, gamePrefs.level1Height);
+
+        //debug
+        this.key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.key3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
     }
 
-    update(time, delta) {
-        // Aquí podrías procesar el movimiento del jugador y otras actualizaciones
+    update(time, delta) 
+    {
+        if (Phaser.Input.Keyboard.JustDown(this.key3)) {
+            this.scene.start('dungeon2');
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.key1)) {
+            this.scene.start('exteriorCastle');
+        }
     }
 }

@@ -164,6 +164,10 @@ export default class exteriorCastle extends Phaser.Scene
             }
         );
 
+        //debug
+        this.key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.key3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
     }
 
     update(time, delta) {
@@ -178,5 +182,14 @@ export default class exteriorCastle extends Phaser.Scene
         });
 
         this.link.updateHealthBar();
+
+        //debug
+        if (Phaser.Input.Keyboard.JustDown(this.key2)) {
+            this.scene.start('swordLevel');
+        }
+          
+        if (Phaser.Input.Keyboard.JustDown(this.key3)) {
+        this.scene.start('dungeon2');
+        }
     }    
 }
