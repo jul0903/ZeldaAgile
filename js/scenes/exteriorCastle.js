@@ -2,7 +2,6 @@ import {gamePrefs} from '../globals.js';
 
 import bushPrefab from '/js/prefabs/bushPrefab.js';
 import npcPrefab from '/js/prefabs/npcPrefab.js';
-import changeScenePrefab from '/js/prefabs/changeScenePrefab.js';
 import linkPrefab from '/js/prefabs/linkPrefab.js';
 import enemiesPrefab from '/js/prefabs/enemiesPrefab.js';
 
@@ -28,6 +27,7 @@ export default class exteriorCastle extends Phaser.Scene
         //UI
         this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 20, frameHeight: 21});
         this.load.spritesheet('healthBar', 'sprHealth.png', { frameWidth: 39, frameHeight: 20});
+        this.load.image('sword', 'sword.png');
 
         //ENEMIES
         this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
@@ -76,20 +76,20 @@ export default class exteriorCastle extends Phaser.Scene
 
         this.link.healthBar = this.healthBar.setDepth(2); 
 
-        // Enemies
+
         this.enemies = this.add.group();
 
         const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
-        const rangerEnemy = new enemiesPrefab(this, 500, 900, 'ranger', this.link).setDepth(1);
-
         this.enemies.add(meleEnemy);
-        this.enemies.add(rangerEnemy);
+        //const rangerEnemy = new enemiesPrefab(this, 500, 900, 'ranger', this.link).setDepth(1);
+        //this.enemies.add(rangerEnemy);
 
-        // Flechas
+        /* Flechas
         this.arrows = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Sprite,
             runChildUpdate: true,
         });
+        */
         
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
@@ -128,9 +128,7 @@ export default class exteriorCastle extends Phaser.Scene
         
                 const dialogueProperty = element.properties.find(prop => prop.name === 'Dialogue');
                 const npcDialogue = dialogueProperty ? dialogueProperty.value : '...'; 
-        
-                console.log(`Creando NPC en (${element.x}, ${element.y}) con diálogo: "${npcDialogue}"`);
-        
+    
                 new npcPrefab(this, {
                     posX: element.x,
                     posY: element.y,
@@ -142,16 +140,16 @@ export default class exteriorCastle extends Phaser.Scene
 
         
         this.game_elements = this.map.getObjectLayer('Agujero');
-        console.log('Objetos de capa Agujero:', this.game_elements);
 
         const agujeroLayer = this.game_elements.objects.filter(obj => obj.type === 'agujero');
-        console.log('Agujeros filtrados:', agujeroLayer);
 
         agujeroLayer.forEach((element) => {
+            // Crear el objeto sin una imagen visible
             const agujeroObject = this.physics.add.staticImage(element.x, element.y, null);
-            agujeroObject.setSize(element.width / 2, element.height / 2);
-            agujeroObject.setOrigin(0.5, 0.5);
-        
+            agujeroObject.setSize(element.width / 3, element.height / 3);
+            agujeroObject.setOrigin(0.3, 0.5);
+            agujeroObject.setAlpha(0);  // Hacer que no sea visible
+            
             this.link.checkCollisionWithAgujero(agujeroObject);
         });
 
@@ -163,19 +161,35 @@ export default class exteriorCastle extends Phaser.Scene
             }
         );
 
+        //debug
+        this.key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.key3 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
     }
 
     update(time, delta) {
-        this.enemies.getChildren().forEach((enemy) => {
-            enemy.update(time, delta);
-        }); 
-
+        
+        /*
         this.arrows.children.iterate((arrow) => {
             if (arrow && (arrow.x < 0 || arrow.x > this.game.config.width || arrow.y < 0 || arrow.y > this.game.config.height)) {
                 arrow.setActive(false).setVisible(false); 
             }
         });
+        */
+
+        this.enemies.getChildren().forEach((enemy) => {
+            enemy.update(time, delta);
+        }); 
 
         this.link.updateHealthBar();
+
+        //debug
+        if (Phaser.Input.Keyboard.JustDown(this.key2)) {
+            this.scene.start('swordLevel');
+        }
+          
+        if (Phaser.Input.Keyboard.JustDown(this.key3)) {
+        this.scene.start('dungeon2');
+        }
     }    
 }

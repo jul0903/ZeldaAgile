@@ -3,30 +3,31 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
         console.log('NPC creado en:', _npc.posX, _npc.posY);
         super(_scene, _npc.posX, _npc.posY, _npc.spriteTag);
 
-        // Añadir el sprite al juego
+        // Añadir el sprite al juego y habilitar la física
         _scene.add.existing(this);
         _scene.physics.world.enable(this);
 
-        // Configurar el cuerpo físico del NPC
-        this.body.setAllowGravity(false); // Sin gravedad para el NPC
-        this.body.setImmovable(true);    // No se moverá al colisionar
-        this.body.setSize(16, 24).setOffset(0, 0);  
+        // Configuración del cuerpo físico
+        this.body.setAllowGravity(false);
+        this.body.setImmovable(true);
+        this.body.setSize(16, 24).setOffset(0, 0);
 
         this.scene = _scene;
-        this.dialogue = _npc.dialogue;  // Guardar el diálogo del NPC
-        this.playerOverlapping = false; // Indicador de contacto con el jugador
-        this.dialogueDisplayed = false; // Para evitar repetir el diálogo
+        this.dialogue = _npc.dialogue; // Guardamos el diálogo del NPC
+        this.playerOverlapping = false; // Indica si el jugador está en contacto
+        this.dialogueDisplayed = false; // Evita mostrar el diálogo repetidamente
+
+        // Guardamos el tipo del NPC (en este caso, se usará para distinguir al npc2)
+        this.npcType = _npc.spriteTag;
 
         this.setColliders();
         this.setupKeyInput();
         this.loadAnimations();
 
         const idleAnimation = `${_npc.spriteTag}Idle`;
-
         if (this.anims.exists(idleAnimation)) {
             this.play(idleAnimation);
         }
-        
     }
 
     loadAnimations() {
@@ -53,27 +54,27 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
     }
 
     setColliders() {
-        // Detectar colisión con el jugador
+        // Detectar colisión con el jugador para actualizar el flag
         this.scene.physics.add.collider(
-            this.scene.link, // El jugador
-            this,            // Este NPC
+            this.scene.link,
+            this,
             () => {
-                this.playerOverlapping = true; // El jugador está en contacto con el NPC
-                this.dialogueDisplayed = false; // Reiniciar el flag cuando el jugador vuelve a estar en contacto
+                this.playerOverlapping = true;
+                this.dialogueDisplayed = false; // Reinicia el flag al entrar en contacto
                 console.log('Jugador en contacto con NPC');
             },
             null,
             this
         );
 
-        // Detectar cuando el jugador deja de colisionar
+        // Detectar cuando el jugador deja de solaparse
         this.scene.physics.add.overlap(
             this.scene.link,
             this,
             () => {
-                this.playerOverlapping = false; // El jugador ya no está en contacto
+                this.playerOverlapping = false;
                 console.log('Jugador fuera del contacto con NPC');
-                this.dialogueDisplayed = false; // Reiniciar el flag del diálogo cuando el jugador deje de estar en contacto
+                this.dialogueDisplayed = false; // Reinicia el flag al salir
             },
             null,
             this
@@ -81,41 +82,55 @@ export default class npcPrefab extends Phaser.GameObjects.Sprite {
     }
 
     setupKeyInput() {
-        // Detectar la tecla "E" solo cuando está colisionando
+        // Detectar la tecla "E" solo cuando el jugador está en contacto con el NPC
         this.scene.input.keyboard.on('keydown-E', () => {
             if (this.playerOverlapping && !this.dialogueDisplayed) {
-                console.log(`NPC dice: "${this.dialogue}"`);
-                this.showDialogue(); // Mostrar el diálogo solo si está en contacto
+                if (this.npcType === 'npc2') {
+                    // Si es el npc2, se evalúa si el jugador ya tiene la espada
+                    if (this.scene.link.hasSword) {
+                        // Si ya tiene la espada, muestra el mensaje alternativo
+                        this.showDialogue("Suerte, Link");
+                    } else {
+                        // Si no la tiene, da la espada y muestra el diálogo original
+                        this.scene.link.hasSword = true;
+                        this.scene.link.addSwordUI();
+                        this.showDialogue(this.dialogue); // Por ejemplo: "toma tu espadita"
+                    }
+                } else {
+                    // Para otros NPCs, se muestra el diálogo configurado
+                    this.showDialogue();
+                }
+                this.dialogueDisplayed = true; // Evita que se vuelva a mostrar inmediatamente
             }
         });
     }
 
-    showDialogue() {
+    // Permite pasar un mensaje opcional; si no se pasa, usa this.dialogue
+    showDialogue(message) {
+        const dialogueMessage = message || this.dialogue;
         // Crear el diálogo box en la parte inferior, fijado en la UI
-        const dialogueBox = this.scene.add.image(this.scene.game.config.width / 2, this.scene.game.config.height - 20, 'dialogueBox');
-        //dialogueBox.setOrigin(0.5);  
-        //dialogueBox.setScale(0.3);
-        dialogueBox.setScrollFactor(0);  // Fijar en UI
-    
+        const dialogueBox = this.scene.add.image(
+            this.scene.game.config.width / 2,
+            this.scene.game.config.height - 20,
+            'dialogueBox'
+        );
+        dialogueBox.setScrollFactor(0);
+
         // Crear el texto utilizando la fuente bitmap 'textFont'
-        // El último parámetro es el tamaño (puedes ajustarlo según convenga)
         const dialogueText = this.scene.add.bitmapText(
-            this.scene.game.config.width / 2, 
-            this.scene.game.config.height - 20, 
-            'textFont', 
-            this.dialogue, 
+            this.scene.game.config.width / 2,
+            this.scene.game.config.height - 20,
+            'textFont',
+            dialogueMessage,
             10 // tamaño de la fuente
         );
-        dialogueText.setOrigin(0.5);  // Alinear el texto en el centro
-        dialogueText.setScrollFactor(0);  // Fijar el texto en la UI
-    
+        dialogueText.setOrigin(0.5);
+        dialogueText.setScrollFactor(0);
+
         // Mostrar el diálogo y eliminarlo después de 3 segundos
         this.scene.time.delayedCall(3000, () => {
             dialogueBox.destroy();
             dialogueText.destroy();
         });
-    
-        this.dialogueDisplayed = true; // Marcar que el diálogo ya ha sido mostrado
     }
-    
 }
