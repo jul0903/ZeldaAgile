@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"Dungeon.json"
+        }
+    },
  "height":88,
  "infinite":false,
  "layers":[

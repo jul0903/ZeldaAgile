@@ -12,7 +12,7 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.world.enable(this);
 
-        this.body.setSize(27, 38).setOffset(0, 0);
+        this.body.setSize(23, 20).setOffset(10, 10);
 
         this.initialX = x; 
         this.patrolDistance = 40; 
@@ -395,7 +395,6 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         if (this.scene.link) {
             this.scene.physics.add.collider(this, this.scene.link, () => {
                 if (this.type === 'mele') {
-                    console.log("Link recibe daño");
                     if (this.scene.link.takeDamage) {
                         // Aquí, 'this' (el enemigo) es la fuente del daño
                         this.scene.link.takeDamage(1, this);
@@ -417,26 +416,16 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
     
     takeDamage(damage, source) {
         this.hp -= damage;
-
+    
+        // Aplicar knock-back al enemigo si se proporciona la fuente
         if (source) {
             let dx = this.x - source.x;
             let dy = this.y - source.y;
             let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const knockBackForce = 50;
+            const knockBackForce = 50; // Ajusta este valor según convenga para el enemigo
             this.body.setVelocity((dx / dist) * knockBackForce, (dy / dist) * knockBackForce);
         }
-
-        this.scene.tweens.add({
-            targets: this,
-            alpha: 0,
-            duration: 100,
-            yoyo: true,
-            repeat: 2,
-            onComplete: () => {
-                this.alpha = 1;
-            }
-        });
-
+    
         if (this.hp <= 0) {
             this.destroy();
         }

@@ -44,7 +44,7 @@ export default class keyPrefab extends Phaser.GameObjects.Sprite {
             // Comprobamos que exista la escena y el jugador, y que estén en solapamiento.
             if (this.scene && this.scene.link && this.isOverlapping(this.scene.link, this)) {
                     this.scene.link.hasKey = true;
-                    this.dialogue = "Has obtenido una llave";
+                    this.dialogue = "Has obtenido llave";
                     this.showDialogue();
                     
                     this.destroy();

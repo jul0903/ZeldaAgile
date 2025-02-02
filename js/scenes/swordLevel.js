@@ -9,6 +9,12 @@ export default class swordLevel extends Phaser.Scene {
         super({ key: 'swordLevel' });
     }
 
+    init(data) {
+        // Guarda los datos recibidos
+        this.linkHP = data.linkHP !== undefined ? data.linkHP : gamePrefs.LINK_MAXHEALTH;
+        this.linkHasSword = data.linkHasSword !== undefined ? data.linkHasSword : true;
+    }
+
     preload() {
         this.cameras.main.setBackgroundColor("112");
 
@@ -87,7 +93,10 @@ export default class swordLevel extends Phaser.Scene {
                 // Configuramos la detección de overlap entre el jugador y la zona
                 this.physics.add.overlap(this.link, zone, () => {
                     console.log("Trigger de cambio de escena activado");
-                    this.scene.start('dungeon2'); // Cambia a la escena "dungeon2"
+                    this.scene.start('dungeon2', { 
+                        linkHP: this.hp, 
+                        linkHasSword: this.hasSword 
+                    });// Cambia a la escena "dungeon2"
                 });
             });
         }

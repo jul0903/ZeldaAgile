@@ -1,10 +1,10 @@
 import {gamePrefs} from '../globals.js';
 
 import linkPrefab from '/js/prefabs/linkPrefab.js';
-import npcPrefab from '../prefabs/npcPrefab.js';
 import bushPrefab from '/js/prefabs/bushPrefab.js';
 import chestPrefab from '../prefabs/chestPrefab.js';
 import keyPrefab from '../prefabs/keyPrefab.js';
+import enemiesPrefab from '../prefabs/enemiesPrefab.js';
 
 export default class dungeon2 extends Phaser.Scene
 {
@@ -12,6 +12,12 @@ export default class dungeon2 extends Phaser.Scene
     {
         super({key:'dungeon2'});
     }
+
+    init(data) {
+            // Guarda los datos recibidos
+            this.linkHP = data.linkHP !== undefined ? data.linkHP : gamePrefs.LINK_MAXHEALTH;
+            this.linkHasSword = data.linkHasSword !== undefined ? data.linkHasSword : true;
+        }
 
     preload()
     {
@@ -36,9 +42,19 @@ export default class dungeon2 extends Phaser.Scene
 
         // Pintar capas
         this.walls = this.map.createLayer('Collisions', 'Dungeon2').setVisible(false);
+        //this.superiorLayer = this.map.createLayer('Superior', 'Dungeon2');
+        //this.superiorLayer.setDepth(2);
 
         // Pintar PJ
         this.link = new linkPrefab(this, 92, 77).setDepth(1);
+
+        // Enemies
+        this.enemies = this.add.group();
+
+        const meleEnemy = new enemiesPrefab(this, 159, 80, 'mele', this.link).setDepth(1);
+        
+
+        this.enemies.add(meleEnemy);
 
         this.map.setCollisionByExclusion(-1, true, true, 'Collisions');
         
@@ -90,6 +106,10 @@ export default class dungeon2 extends Phaser.Scene
 
     update(time, delta) 
     {
+        this.enemies.getChildren().forEach((enemy) => {
+            enemy.update(time, delta);
+        }); 
+
         if (Phaser.Input.Keyboard.JustDown(this.key2)) {
             this.scene.start('swordLevel');
         }

@@ -76,20 +76,20 @@ export default class exteriorCastle extends Phaser.Scene
 
         this.link.healthBar = this.healthBar.setDepth(2); 
 
-         // Enemies
+
         this.enemies = this.add.group();
 
         const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
-        const rangerEnemy = new enemiesPrefab(this, 500, 900, 'ranger', this.link).setDepth(1);
-
         this.enemies.add(meleEnemy);
-        this.enemies.add(rangerEnemy);
+        //const rangerEnemy = new enemiesPrefab(this, 500, 900, 'ranger', this.link).setDepth(1);
+        //this.enemies.add(rangerEnemy);
 
-        // Flechas
+        /* Flechas
         this.arrows = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Sprite,
             runChildUpdate: true,
         });
+        */
         
         // Pintar capa superior
         this.map.createLayer('Superior', 'CastilloZelda');
@@ -128,9 +128,7 @@ export default class exteriorCastle extends Phaser.Scene
         
                 const dialogueProperty = element.properties.find(prop => prop.name === 'Dialogue');
                 const npcDialogue = dialogueProperty ? dialogueProperty.value : '...'; 
-        
-                console.log(`Creando NPC en (${element.x}, ${element.y}) con diálogo: "${npcDialogue}"`);
-        
+    
                 new npcPrefab(this, {
                     posX: element.x,
                     posY: element.y,
@@ -142,10 +140,8 @@ export default class exteriorCastle extends Phaser.Scene
 
         
         this.game_elements = this.map.getObjectLayer('Agujero');
-        console.log('Objetos de capa Agujero:', this.game_elements);
 
         const agujeroLayer = this.game_elements.objects.filter(obj => obj.type === 'agujero');
-        console.log('Agujeros filtrados:', agujeroLayer);
 
         agujeroLayer.forEach((element) => {
             // Crear el objeto sin una imagen visible
@@ -172,15 +168,18 @@ export default class exteriorCastle extends Phaser.Scene
     }
 
     update(time, delta) {
-        this.enemies.getChildren().forEach((enemy) => {
-            enemy.update(time, delta);
-        }); 
-
+        
+        /*
         this.arrows.children.iterate((arrow) => {
             if (arrow && (arrow.x < 0 || arrow.x > this.game.config.width || arrow.y < 0 || arrow.y > this.game.config.height)) {
                 arrow.setActive(false).setVisible(false); 
             }
         });
+        */
+
+        this.enemies.getChildren().forEach((enemy) => {
+            enemy.update(time, delta);
+        }); 
 
         this.link.updateHealthBar();
 

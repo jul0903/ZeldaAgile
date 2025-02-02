@@ -20,11 +20,13 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
         this.hp = gamePrefs.LINK_MAXHEALTH;
         this.maxHealh = gamePrefs.LINK_MAXHEALTH;
 
-        this.hasSword = true;
+        //TODO esta es la variable:
+        this.hasSword = false;
         this.hasKey = false;
         this.state = 'walk'; // estados: 'walk', 'attack', 'dead', 'fall', etc.
         this.lastDirection = 'down'; // dirección por defecto
         this.isDying = false; // bandera para evitar reprocesar la muerte
+        this.attackCooldown = false;
 
         // Configuración del hitbox de la espada
         this.swordHitbox = this.scene.add.zone(this.x, this.y, 14, 14);
@@ -32,6 +34,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
         this.swordHitbox.body.setAllowGravity(false);
         this.swordHitbox.body.setImmovable(true);
         this.swordHitbox.active = false;
+        this.swordHitbox.visible = false;
         this.swordUI = null;
     }
 
@@ -129,58 +132,6 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
         }
     }
 
-    heal(amount) {
-        this.hp += amount;
-        if (this.hp > this.maxHealh) this.hp = this.maxHealh;
-        this.updateHealthBar();
-    }
-
-    takeDamage(damage, source) {
-        if (this.invulnerable) return;
-        this.hp -= damage;
-        this.invulnerable = true;
-        
-        if (source) {
-            let dx = this.x - source.x;
-            let dy = this.y - source.y;
-            let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const knockBackForce = 100;
-            this.body.setVelocity((dx / dist) * knockBackForce, (dy / dist) * knockBackForce);
-        }
-
-        this.scene.tweens.add({
-            targets: this,
-            alpha: 0,
-            duration: 100,
-            yoyo: true,
-            repeat: 3,
-            onComplete: () => {
-                this.alpha = 1;
-                this.invulnerable = false;
-            }
-        });
-
-        if (this.hp <= 0) {
-            this.hp = 0;
-            this.updateHealthBar();
-            this.handleDeath();
-        } else {
-            this.updateHealthBar();
-        }
-    }
-    
-    handleDeath() {
-        this.scene.cameras.main.shake(250, 0.01);
-        this.scene.cameras.main.flash(250, 255, 255, 255);
-        this.scene.time.delayedCall(300, () => {
-            this.setPosition(92, 77);
-            this.hp = this.scene.gamePrefs.LINK_MAXHEALTH;
-            this.updateHealthBar();
-            this.alpha = 1;
-            this.anims.play('idleDown', true);
-        });
-    }
-
     handleMovement() {
         if (this.state !== 'walk') return;
 
@@ -231,9 +182,82 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
         }
     }
 
+    heal(amount) {
+        this.hp += amount;
+        if (this.hp > this.maxHealh) this.hp = this.maxHealh;
+        this.updateHealthBar();
+    }
+
+    takeDamage(damage, source) {
+        if (this.invulnerable) return;
+    
+        this.hp -= damage;
+        this.invulnerable = true;
+    
+        if (source) {
+            // Calculamos el vector desde la fuente hasta Link
+            const dx = this.x - source.x;
+            const dy = this.y - source.y;
+            const angle = Math.atan2(dy, dx);
+            const knockBackForce = 100; // Ajusta este valor según convenga
+    
+            // Asignamos la velocidad usando el ángulo calculado
+            this.body.setVelocity(
+                Math.cos(angle) * knockBackForce,
+                Math.sin(angle) * knockBackForce
+            );
+        }
+    
+        // Cambiar el estado a "hurt" para evitar que el movimiento normal lo sobrescriba
+        this.state = 'hurt';
+    
+        // Temporizador para volver al estado 'walk' luego del knockback (por ejemplo, 300ms)
+        this.scene.time.delayedCall(300, () => {
+            // Reiniciamos la velocidad (opcional, según cómo quieras que se sienta)
+            this.body.setVelocity(0, 0);
+            this.state = 'walk';
+        });
+    
+        // Animación de invulnerabilidad (parpadeo)
+        this.scene.tweens.add({
+            targets: this,
+            alpha: 0,
+            duration: 100,
+            yoyo: true,
+            repeat: 3,
+            onComplete: () => {
+                this.alpha = 1;
+                this.invulnerable = false;
+            }
+        });
+    
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.updateHealthBar();
+            this.handleDeath();
+        } else {
+            this.updateHealthBar();
+        }
+    }
+    
+    
+    handleDeath() {
+        this.scene.cameras.main.shake(250, 0.01);
+        this.scene.cameras.main.flash(250, 255, 255, 255);
+        this.scene.time.delayedCall(300, () => {
+            this.setPosition(92, 77);
+            this.hp = gamePrefs.LINK_MAXHEALTH;
+            this.updateHealthBar();
+            this.alpha = 1;
+            this.anims.play('idleDown', true);
+        });
+    }
+
     attack() {
-        if (this.attackCooldown || !this.hasSword) return;
+        if (this.attackCooldown) return;
+
         this.attackCooldown = true;
+        this.state = 'attack';
         this.body.setVelocity(0, 0);
         const offset = 10;
 
@@ -265,23 +289,25 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
                 this.swordHitbox.setPosition(this.x, this.y + offset);
                 break;
         }
-    
-        this.swordHitbox.active = true;
+
+        this.swordHitbox.setActive(true).setVisible(true);
         this.swordHitbox.body.enable = true;
-    
+
+        this.scene.time.delayedCall(150, () => {
+            this.swordHitbox.setActive(false).setVisible(false);
+            this.swordHitbox.body.enable = false;
+        });
+
         this.once('animationcomplete', () => {
             this.setOrigin(0.5, 0.5);
             this.body.setOffset(3, 12);
-            this.swordHitbox.setActive(false).setVisible(false);
-            this.swordHitbox.body.enable = false;
-            this.swordHitbox.active = false;
-            this.attackCooldown = false;
             this.state = 'walk';
+            this.attackCooldown = false;
         });
     }
 
     handleAttack() {
-        if (this.attackKey.isDown && this.state === 'walk') {
+        if (this.attackKey.isDown && this.hasSword) {
             this.state = 'attack';
         }
     }
@@ -299,7 +325,10 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
             this.anims.play('dead', true);
         }
         this.once('animationcomplete', () => {
-            this.scene.scene.start('swordLevel');
+            this.scene.scene.start('swordLevel', { 
+                linkHP: this.hp, 
+                linkHasSword: this.hasSword 
+            });
         });
     }
 
@@ -312,7 +341,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
     }
 
     preUpdate(time, delta) {
-        // Se gestionan los estados
+        // Máquina de estados
         switch (this.state) {
             case 'walk':
                 this.handleMovement();
@@ -323,12 +352,52 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite {
             case 'fall':
                 this.handleFall();
                 break;
+                case 'hurt':
+                    break;
             default:
                 this.state = 'walk';
                 this.handleMovement();
                 break;
         }
         this.handleAttack();
+
+        /*
+        // Si la hitbox está activa, la volvemos a alinear al sprite
+        if (this.swordHitbox.active) {
+            const offset = 10;
+            switch (this.lastDirection) {
+                case 'left':
+                    this.swordHitbox.setPosition(this.x - offset, this.y);
+                    break;
+                case 'right':
+                    this.swordHitbox.setPosition(this.x + offset, this.y);
+                    break;
+                case 'up':
+                    this.swordHitbox.setPosition(this.x, this.y - offset);
+                    break;
+                case 'down':
+                    this.swordHitbox.setPosition(this.x, this.y + offset);
+                    break;
+            }
+        }
+
+        // Detectar la finalización de la animación de ataque
+        if (this.anims.currentAnim && this.anims.currentAnim.key.indexOf('attack') !== -1) {
+            if (this.anims.isPlaying === false) {
+                // Restauramos la posición y el offset del sprite
+                this.setOrigin(0.5, 0.5);
+                this.body.setOffset(3, 12);
+                // Desactivamos la hitbox de la espada
+                this.swordHitbox.active = false;
+                this.swordHitbox.visible = false;
+                this.swordHitbox.body.enable = false;
+                this.attackCooldown = false;
+                this.state = 'walk';
+            }
+        }
+            */
+
         super.preUpdate(time, delta);
     }
 }
+
