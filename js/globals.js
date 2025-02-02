@@ -6,5 +6,6 @@ export const gamePrefs=
     level1Height:1040, //130*8
     LINK_SPEED:100,
     LINK_GRAVITY:0,
-    LINK_MAXHEALTH:3
+    LINK_MAXHEALTH:3,
+    ENEMY_MAXHEALTH:3
 }

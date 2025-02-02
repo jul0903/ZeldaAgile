@@ -14,24 +14,19 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
 
         this.body.setSize(27, 38).setOffset(0, 0);
 
-     
         this.initialX = x; 
         this.patrolDistance = 40; 
-        this.speed = type === 'mele' ? 30 : 10; 
+        this.speed = type === 'mele' ? 20 : 10; 
         this.movingRight = true; 
 
         // Animaciones
         this.loadAnimations();
-        if(type=='mele')
-            this.anims.play('meleIdleRight', true); 
-        
-        else if (type=='ranger')
-            this.anims.play('rangerIdleDown', true); 
-        
-        else 
-            console.log("no type detected")
-        
+        this.anims.play('meleIdleRight', true); 
+
         this.setColliders();
+
+        this.hp = gamePrefs.ENEMY_MAXHEALTH;
+        this.lastHitTime = 0;
     }
 
    loadAnimations()
@@ -306,6 +301,78 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
         }
     }
 
+    /*
+    handleRangerBehavior(delta) {
+        const distanceToPlayer = Phaser.Math.Distance.Between(
+            this.x,
+            this.y,
+            this.player.x,
+            this.player.y
+        );
+    
+        if (distanceToPlayer <= this.area) {
+            // Si el jugador está en rango, perseguir
+            this.isChasing = true;
+            this.scene.physics.moveToObject(this, this.player, this.speed + 40);
+    
+            // Calcular el ángulo hacia el jugador
+            const angleToPlayer = Phaser.Math.Angle.Between(this.x, this.y, this.player.x, this.player.y);
+    
+            // Elegir animación dependiendo del ángulo
+            if (angleToPlayer >= -Math.PI / 4 && angleToPlayer < Math.PI / 4) { // Derecha
+                this.anims.play('rangerWalkRight', true);
+                this.setFlipX(false);  // No invertir sprite
+            } else if (angleToPlayer >= Math.PI / 4 && angleToPlayer < 3 * Math.PI / 4) { // Abajo derecha
+                this.anims.play('rangerWalkDown', true);
+            } else if (angleToPlayer >= -3 * Math.PI / 4 && angleToPlayer < -Math.PI / 4) { // Arriba derecha
+                this.anims.play('rangerWalkUp', true);
+            } else if (angleToPlayer >= -Math.PI && angleToPlayer < -3 * Math.PI / 4) { // Izquierda
+                this.anims.play('rangerWalkLeft', true);
+                this.setFlipX(true);  // Invertir sprite
+            } else if (angleToPlayer >= 3 * Math.PI / 4 && angleToPlayer < Math.PI) { // Abajo izquierda
+                this.anims.play('rangerWalkDown', true);
+                this.setFlipX(true);  // Invertir sprite
+            } else { // Arriba izquierda
+                this.anims.play('rangerWalkUp', true);
+                this.setFlipX(true);  // Invertir sprite
+            }
+    
+            // Disparar flecha
+            this.shootArrow();
+        } else {
+            // Si el jugador está fuera de rango, patrullar
+            if (this.isChasing) {
+                this.isChasing = false;
+                this.body.setVelocity(0);  // Detener movimiento
+            }
+            this.move(delta);
+        }
+    }
+    
+    shootArrow() {
+        // Crear o reciclar la flecha
+        let arrow = this.scene.arrowPool.getFirst(false);
+        if (!arrow) {
+            console.log('Crea flecha');
+            arrow = new ArrowPrefab(this.scene, this.x, this.y); // Posición inicial de la flecha
+            this.scene.arrowPool.add(arrow);
+        } else {
+            console.log('Recicla flecha');
+            arrow.setPosition(this.x, this.y); // Resetear posición de la flecha
+            arrow.setActive(true);
+        }
+    
+        // Configurar la flecha (ejemplo usando animación de "flecha hacia abajo")
+        arrow.anims.play('enemiesArrowDown', true);
+        
+        // Aplicar velocidad a la flecha (ejemplo, la velocidad la puedes ajustar)
+        arrow.body.setVelocityY(gamePrefs.ENEMY_ARROW_SPEED); // Asegúrate de tener la constante de velocidad definida
+    
+        // Agregar sonido de disparo (si lo tienes)
+        this.scene.enemyShoot.play();
+    }    
+    */
+
     update(time, delta) {
         if (this.type === 'mele') {
             this.handleMeleBehavior(delta);
@@ -319,31 +386,62 @@ export default class enemiesPrefab extends Phaser.GameObjects.Sprite {
     }
     
     setColliders() {
-        // Colisión con paredes
+        // Colisión con paredes (si existen)
         if (this.scene.walls) {
-            console.log("Colisión con paredes configurada");
             this.scene.physics.add.collider(this, this.scene.walls);
         }
-
-        // Colisión con el jugador (Link)
+    
+        // Colisión con el jugador (Link): cuando el enemigo choca directamente, Link recibe daño
         if (this.scene.link) {
-            console.log("Colisión con Link configurada");
             this.scene.physics.add.collider(this, this.scene.link, () => {
                 if (this.type === 'mele') {
                     console.log("Link recibe daño");
                     if (this.scene.link.takeDamage) {
-                        this.scene.link.takeDamage(1); 
+                        // Aquí, 'this' (el enemigo) es la fuente del daño
+                        this.scene.link.takeDamage(1, this);
                     }
                 }
             });
         }
+    
+        // Overlap entre el hitbox de la espada de Link y este enemigo
+        if (this.scene.link && this.scene.link.swordHitbox) {
+            this.scene.physics.add.overlap(this.scene.link.swordHitbox, this, (hitbox, enemy) => {
+                if (this.scene.link.state === 'attack' && enemy.active) {
+                    // 'this.scene.link' es la fuente del daño para el enemigo
+                    enemy.takeDamage(1, this.scene.link);
+                }
+            });
+        }
     }
-
-    takeDamage(damage) {
+    
+    takeDamage(damage, source) {
         this.hp -= damage;
-        if (this.hp < 0) this.hp = 0;  
-        this.updateHealthBar(); 
+
+        if (source) {
+            let dx = this.x - source.x;
+            let dy = this.y - source.y;
+            let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const knockBackForce = 50;
+            this.body.setVelocity((dx / dist) * knockBackForce, (dy / dist) * knockBackForce);
+        }
+
+        this.scene.tweens.add({
+            targets: this,
+            alpha: 0,
+            duration: 100,
+            yoyo: true,
+            repeat: 2,
+            onComplete: () => {
+                this.alpha = 1;
+            }
+        });
+
+        if (this.hp <= 0) {
+            this.destroy();
+        }
     }
+    
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
