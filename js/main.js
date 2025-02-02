@@ -4,17 +4,17 @@
 //Importamos las escenas
 import exteriorCastle from '/js/scenes/exteriorCastle.js';
 import swordLevel from '/js/scenes/swordLevel.js';
+import dungeon2 from '/js/scenes/dungeon2.js';
 
 //Importamos el módulo de gamePrefs
 import {gamePrefs} from '/js/globals.js';
-//import {config} from '/js/globals.js'; <- Podría haber más
 
 var config = 
 {
     type: Phaser.AUTO,
     width: gamePrefs.gameWidth,
     height: gamePrefs.gameHeight,
-    scene:[exteriorCastle,swordLevel],
+    scene:[exteriorCastle,swordLevel,dungeon2],
     render:
     {
         pixelArt:true

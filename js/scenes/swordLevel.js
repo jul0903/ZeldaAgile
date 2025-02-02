@@ -1,7 +1,5 @@
 import {gamePrefs} from '../globals.js';
 
-import bushPrefab from '/js/prefabs/bushPrefab.js';
-import changeScenePrefab from '/js/prefabs/changeScenePrefab.js';
 import linkPrefab from '/js/prefabs/linkPrefab.js';
 import npcPrefab from '../prefabs/npcPrefab.js';
 
@@ -65,11 +63,11 @@ export default class swordLevel extends Phaser.Scene
                 });
             }
         });
-
         
+
+
         // CAMARA
         this.cameras.main.startFollow(this.link);
-        this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);
-            
+        this.cameras.main.setBounds(0,0,gamePrefs.level1Width,gamePrefs.level1Height);  
     }
 }

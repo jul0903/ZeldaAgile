@@ -2,7 +2,6 @@ import {gamePrefs} from '../globals.js';
 
 import bushPrefab from '/js/prefabs/bushPrefab.js';
 import npcPrefab from '/js/prefabs/npcPrefab.js';
-import changeScenePrefab from '/js/prefabs/changeScenePrefab.js';
 import linkPrefab from '/js/prefabs/linkPrefab.js';
 import enemiesPrefab from '/js/prefabs/enemiesPrefab.js';
 
