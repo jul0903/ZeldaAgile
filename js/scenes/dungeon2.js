@@ -16,8 +16,9 @@ export default class dungeon2 extends Phaser.Scene
          //MAP
          this.load.setPath('assets/tilesets'); 
          this.load.image('Background3', 'Dungeon2.png');
-         this.load.image('Jarro', 'jarro.png');
-         this.load.image('Chest', 'chest.png');
+         this.load.image('jarro', 'jarro.png');
+         this.load.image('chest', 'chest.png');
+         this.load.image('key', 'key.png');
  
          this.load.setPath('assets/maps'); // Declarar mapa
          this.load.tilemapTiledJSON('Dungeon2', 'Dungeon2.json');
@@ -44,7 +45,7 @@ export default class dungeon2 extends Phaser.Scene
         {
             switch(element.type)
                 {
-                    case 'Jarro':
+                    case 'jarro':
                         this.bush = new bushPrefab (
                             this,
                             {
@@ -53,9 +54,11 @@ export default class dungeon2 extends Phaser.Scene
                                 spriteTag:element.type,
                             });
                         break;
-                    case 'Chest': 
+                    case 'chest': 
                         console.log("chest")
-                    break;    
+                        break;    
+                    case 'key':
+                        console.log("key")
                     default:
                         break;
                 }           
