@@ -148,10 +148,12 @@ export default class exteriorCastle extends Phaser.Scene
         console.log('Agujeros filtrados:', agujeroLayer);
 
         agujeroLayer.forEach((element) => {
+            // Crear el objeto sin una imagen visible
             const agujeroObject = this.physics.add.staticImage(element.x, element.y, null);
-            agujeroObject.setSize(element.width / 2, element.height / 2);
-            agujeroObject.setOrigin(0.5, 0.5);
-        
+            agujeroObject.setSize(element.width / 3, element.height / 3);
+            agujeroObject.setOrigin(0.3, 0.5);
+            agujeroObject.setAlpha(0);  // Hacer que no sea visible
+            
             this.link.checkCollisionWithAgujero(agujeroObject);
         });
 

@@ -22,7 +22,8 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.hp = gamePrefs.LINK_MAXHEALTH;   
         this.maxHealh = gamePrefs.LINK_MAXHEALTH;
 
-        this.hasSword = true;
+        this.hasSword = false;
+        
         this.swordHitbox = this.scene.add.zone(this.x, this.y, 14, 14); // Ajusta el tamaño según necesites
         this.scene.physics.world.enable(this.swordHitbox);
         this.swordHitbox.body.setAllowGravity(false);
