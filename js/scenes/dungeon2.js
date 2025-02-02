@@ -3,6 +3,8 @@ import {gamePrefs} from '../globals.js';
 import linkPrefab from '/js/prefabs/linkPrefab.js';
 import npcPrefab from '../prefabs/npcPrefab.js';
 import bushPrefab from '/js/prefabs/bushPrefab.js';
+import chestPrefab from '../prefabs/chestPrefab.js';
+import keyPrefab from '../prefabs/keyPrefab.js';
 
 export default class dungeon2 extends Phaser.Scene
 {
@@ -55,10 +57,22 @@ export default class dungeon2 extends Phaser.Scene
                             });
                         break;
                     case 'chest': 
-                        console.log("chest")
+                    this.chest = new chestPrefab (
+                        this,
+                        {
+                            posX:element.x + element.width / 2,
+                            posY:element.y + element.height / 2,
+                            spriteTag:element.type,
+                        });    
                         break;    
                     case 'key':
-                        console.log("key")
+                        this.key = new keyPrefab (
+                            this,
+                            {
+                                posX:element.x + element.width / 2,
+                                posY:element.y + element.height / 2,
+                                spriteTag:element.type,
+                            });    
                     default:
                         break;
                 }           
@@ -83,5 +97,7 @@ export default class dungeon2 extends Phaser.Scene
         if (Phaser.Input.Keyboard.JustDown(this.key1)) {
             this.scene.start('exteriorCastle');
         }
+
+        this.link.updateHealthBar();
     }
 }

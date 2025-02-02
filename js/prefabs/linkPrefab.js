@@ -23,6 +23,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
         this.maxHealh = gamePrefs.LINK_MAXHEALTH;
 
         this.hasSword = false;
+        this.hasKey = false;
         
         this.swordHitbox = this.scene.add.zone(this.x, this.y, 14, 14); // Ajusta el tamaño según necesites
         this.scene.physics.world.enable(this.swordHitbox);
@@ -31,6 +32,7 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
 
         // Desactivamos inicialmente el hitbox
         this.swordHitbox.active = false;  
+        this.swordUI = null;
     }
 
    loadAnimations()
@@ -252,6 +254,13 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
             this.state = 'attack';
         }
     }
+
+    addSwordUI() {
+        if (!this.swordUI) {
+            this.swordUI = this.scene.add.image(15, 10, 'sword');
+            this.swordUI.setScrollFactor(0);
+        }
+    }
     
     handleFall() {
         if (this.state !== 'fall') return;
@@ -294,7 +303,6 @@ export default class linkPrefab extends Phaser.GameObjects.Sprite
                 this.handleMovement();
                 break;
         }
-    
         super.preUpdate(time, delta);
     }
 }

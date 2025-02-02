@@ -240,9 +240,9 @@
   <image source="../tilesets/Dungeon2.png" width="476" height="222"/>
  </imagelayer>
  <objectgroup id="5" name="Objects">
-  <object id="1" name="Chest" type="Chest" x="351" y="78" width="16" height="16"/>
-  <object id="2" name="Jarro2" type="Jarro" x="383" y="142" width="16" height="16"/>
-  <object id="3" name="Jarro1" type="Jarro" x="383" y="126" width="16" height="16"/>
-  <object id="6" name="Key" type="Key" x="86" y="178" width="16" height="16"/>
+  <object id="1" name="chest" type="chest" x="351" y="78" width="16" height="16"/>
+  <object id="2" name="jarro1" type="jarro" x="383" y="142" width="16" height="16"/>
+  <object id="3" name="jarro1" type="jarro" x="383" y="126" width="16" height="16"/>
+  <object id="6" name="key" type="key" x="86" y="178" width="16" height="16"/>
  </objectgroup>
 </map>

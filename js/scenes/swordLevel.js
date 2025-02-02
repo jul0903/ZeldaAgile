@@ -111,5 +111,7 @@ export default class swordLevel extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.key1)) {
             this.scene.start('exteriorCastle');
         }
+
+        this.link.updateHealthBar();
     }
 }

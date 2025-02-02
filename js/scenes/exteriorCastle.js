@@ -27,6 +27,7 @@ export default class exteriorCastle extends Phaser.Scene
         //UI
         this.load.spritesheet('ui', 'sprUI.png', { frameWidth: 20, frameHeight: 21});
         this.load.spritesheet('healthBar', 'sprHealth.png', { frameWidth: 39, frameHeight: 20});
+        this.load.image('sword', 'sword.png');
 
         //ENEMIES
         this.load.spritesheet('enemies', 'sprEnemies2.png', { frameWidth: 34, frameHeight: 38});
@@ -75,7 +76,7 @@ export default class exteriorCastle extends Phaser.Scene
 
         this.link.healthBar = this.healthBar.setDepth(2); 
 
-        // Enemies
+         // Enemies
         this.enemies = this.add.group();
 
         const meleEnemy = new enemiesPrefab(this, 500, 750, 'mele', this.link).setDepth(1);
